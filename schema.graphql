@@ -94,6 +94,8 @@ type Mutation {
 
   contactAdd(contact: ContactInputs!): Contact!
   contactUpdate(id: Int!, changes: ContactUpdateInputs!): Contact!
+  contactDelete(id: Int!): Boolean!
+  contactRestore(id: Int!): Boolean!
 }
 
 enum frequency {

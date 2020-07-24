@@ -141,7 +141,8 @@ async function update(_, { id, changes }) {
 // TODO: Add more changes
 async function updateContact(_, { id, changes }) {
   const db = getDb();
-  if (changes.contactFrequency || changes.email || changes.notes) {
+  if (changes.contactFrequency || changes.email
+      || changes.notes || changes.activeStatus) {
     const contact = await db.collection('contacts').findOne({ id });
     Object.assign(contact, changes);
     validateContact(contact);
@@ -160,6 +161,36 @@ async function remove(_, { id }) {
   let result = await db.collection('deleted_issues').insertOne(issue);
   if (result.insertedId) {
     result = await db.collection('issues').removeOne({ id });
+    return result.deletedCount === 1;
+  }
+  return false;
+}
+
+// Implemented RemoveContact
+async function removeContact(_, { id }) {
+  const db = getDb();
+  const issue = await db.collection('contacts').findOne({ id });
+  if (!issue) return false;
+  issue.deleted = new Date();
+
+  let result = await db.collection('deleted_contacts').insertOne(issue);
+  if (result.insertedId) {
+    result = await db.collection('contacts').removeOne({ id });
+    return result.deletedCount === 1;
+  }
+  return false;
+}
+
+// Implemented RestoreContact
+async function restoreContact(_, { id }) {
+  const db = getDb();
+  const issue = await db.collection('deleted_contacts').findOne({ id });
+  if (!issue) return false;
+  issue.deleted = new Date();
+
+  let result = await db.collection('contacts').insertOne(issue);
+  if (result.insertedId) {
+    result = await db.collection('deleted_contacts').removeOne({ id });
     return result.deletedCount === 1;
   }
   return false;
@@ -224,4 +255,6 @@ module.exports = {
   addContact,
   getContact,
   updateContact,
+  removeContact,
+  restoreContact,
 };

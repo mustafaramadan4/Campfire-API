@@ -23,6 +23,8 @@ const resolvers = {
     issueUpdate: issue.update,
     issueDelete: issue.delete,
     issueRestore: issue.restore,
+
+    contactAdd: issue.addContact,
   },
   GraphQLDate,
 };

@@ -88,6 +88,20 @@ async function add(_, { issue }) {
   return savedIssue;
 }
 
+async function addContact(_, { contact }) {
+  const db = getDb();
+  // later add a validation method - at least one of the contact info field needs to be present
+
+  const newContact = Object.assign({}, contact);
+  // Object.assign creates a copy to the source from the target
+  newContact.id = await getNextSequence('contacts');
+
+  const result = await db.collection('contacts').insertOne(newContact);
+  const savedContact = await db.collection('contacts')
+    .findOne({ _id: result.insertedId });
+  return savedContact;
+}
+
 async function update(_, { id, changes }) {
   const db = getDb();
   if (changes.title || changes.status || changes.owner) {
@@ -171,4 +185,5 @@ module.exports = {
 
   getContact,
   listContact,
+  addContact,
 };

@@ -44,9 +44,14 @@ async function list(_, {
   return { issues, pages };
 }
 
-async function listContact(_, { page }) {
+async function listContact(_, { activeStatus, page }) {
+  // it accepts activeStatus as an optional filter param
   const db = getDb();
-  const cursor = db.collection('contacts').find()
+  const filter = {};
+  // if activeStatus is passed in as query param, add it to the list of filters
+  if (activeStatus!==undefined) filter.activeStatus = activeStatus;
+  console.log(filter);
+  const cursor = db.collection('contacts').find(filter)
   .sort({ name: 1})
   .skip(PAGE_SIZE * (page - 1))
   .limit(PAGE_SIZE);

@@ -80,7 +80,10 @@ type Query {
   ): [IssueCounts!]!
 
   contact(id: Int!): Contact!
-  contactList(page: Int = 1): ContactsWithPages
+  contactList(
+    activeStatus: Boolean
+    page: Int = 1
+  ): ContactsWithPages
 }
 type Mutation {
   setAboutMessage(message: String!): String

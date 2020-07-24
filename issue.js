@@ -44,13 +44,16 @@ async function list(_, {
   return { issues, pages };
 }
 
-async function listContact(_, { activeStatus, page }) {
+async function listContact(_, { activeStatus, search, page }) {
   // it accepts activeStatus as an optional filter param
   const db = getDb();
   const filter = {};
   // if activeStatus is passed in as query param, add it to the list of filters
   if (activeStatus!==undefined) filter.activeStatus = activeStatus;
   console.log(filter);
+
+  if (search) filter.$text = { $search: search };
+
   const cursor = db.collection('contacts').find(filter)
   .sort({ name: 1})
   .skip(PAGE_SIZE * (page - 1))
@@ -135,6 +138,18 @@ async function update(_, { id, changes }) {
   const savedIssue = await db.collection('issues').findOne({ id });
   return savedIssue;
 }
+// TODO: Add more changes
+async function updateContact(_, { id, changes }) {
+  const db = getDb();
+  if (changes.contactFrequency || changes.email || changes.notes) {
+    const contact = await db.collection('contacts').findOne({ id });
+    Object.assign(contact, changes);
+    validateContact(contact);
+  }
+  await db.collection('contacts').updateOne({ id }, { $set: changes });
+  const savedContact = await db.collection('contacts').findOne({ id });
+  return savedContact;
+}
 
 async function remove(_, { id }) {
   const db = getDb();
@@ -205,7 +220,8 @@ module.exports = {
   restore: mustBeSignedIn(restore),
   counts,
 
-  getContact,
   listContact,
   addContact,
+  getContact,
+  updateContact,
 };

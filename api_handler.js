@@ -25,6 +25,7 @@ const resolvers = {
     issueRestore: issue.restore,
 
     contactAdd: issue.addContact,
+    contactUpdate: issue.updateContact,
   },
   GraphQLDate,
 };

@@ -93,6 +93,9 @@ type Mutation {
   issueRestore(id: Int!): Boolean!
 
   contactAdd(contact: ContactInputs!): Contact!
+  contactUpdate(id: Int!, changes: ContactUpdateInputs!): Contact!
+  contactDelete(id: Int!): Boolean!
+  contactRestore(id: Int!): Boolean!
 }
 
 enum frequency {
@@ -157,6 +160,23 @@ input ContactInputs {
   contextSpace: String
   "if not supplied, will be set to 'true'"
   activeStatus: Boolean = true
+  lastContactDate: GraphQLDate
+  nextContactDate: GraphQLDate
+  notes: String
+}
+
+"""Inputs for contactUpdate: all are optional. Whichever is specified will
+be set to the given value, undefined fields will remain unmodified."""
+input ContactUpdateInputs {
+  company: String
+  title: String
+  contactFrequency: frequency
+  email: String
+  phone: String
+  LinkedIn: String
+  priority: priority
+  familiarity: familiarity
+  activeStatus: Boolean
   lastContactDate: GraphQLDate
   nextContactDate: GraphQLDate
   notes: String

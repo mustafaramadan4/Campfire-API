@@ -44,13 +44,16 @@ async function list(_, {
   return { issues, pages };
 }
 
-async function listContact(_, { activeStatus, page }) {
+async function listContact(_, { activeStatus, search, page }) {
   // it accepts activeStatus as an optional filter param
   const db = getDb();
   const filter = {};
   // if activeStatus is passed in as query param, add it to the list of filters
   if (activeStatus!==undefined) filter.activeStatus = activeStatus;
   console.log(filter);
+
+  if (search) filter.$text = { $search: search };
+
   const cursor = db.collection('contacts').find(filter)
   .sort({ name: 1})
   .skip(PAGE_SIZE * (page - 1))
@@ -74,6 +77,27 @@ function validate(issue) {
   }
 }
 
+// Included validateContact function -- Email validation should be elsewhere?
+function validateContact(contact) {
+  const errors = [];
+  if (contact.name.length < 3) {
+    errors.push('Field "name" must be at least 3 characters long.');
+  }
+  if (contact.email.length === 0 && contact.phone.length === 0
+    && contact.Linkedin.lenght === 0) {
+    errors.push('At least one contact mean should be provided.');
+  }
+  if(contact.email.length > 0) {
+    let mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    if(!contact.email.match(mailformat)) {
+      errors.push('You have entered an invalid email address!');
+    }
+  }
+  if (errors.length > 0) {
+    throw new UserInputError('Invalid input(s)', { errors });
+  }
+}
+
 async function add(_, { issue }) {
   const db = getDb();
   validate(issue);
@@ -90,7 +114,8 @@ async function add(_, { issue }) {
 
 async function addContact(_, { contact }) {
   const db = getDb();
-  // later add a validation method - at least one of the contact info field needs to be present
+  // Added validation method for name and contact info (validate email)
+  validateContact(contact);
 
   const newContact = Object.assign({}, contact);
   // Object.assign creates a copy to the source from the target
@@ -113,6 +138,19 @@ async function update(_, { id, changes }) {
   const savedIssue = await db.collection('issues').findOne({ id });
   return savedIssue;
 }
+// TODO: Add more changes
+async function updateContact(_, { id, changes }) {
+  const db = getDb();
+  if (changes.contactFrequency || changes.email
+      || changes.notes || changes.activeStatus) {
+    const contact = await db.collection('contacts').findOne({ id });
+    Object.assign(contact, changes);
+    validateContact(contact);
+  }
+  await db.collection('contacts').updateOne({ id }, { $set: changes });
+  const savedContact = await db.collection('contacts').findOne({ id });
+  return savedContact;
+}
 
 async function remove(_, { id }) {
   const db = getDb();
@@ -123,6 +161,36 @@ async function remove(_, { id }) {
   let result = await db.collection('deleted_issues').insertOne(issue);
   if (result.insertedId) {
     result = await db.collection('issues').removeOne({ id });
+    return result.deletedCount === 1;
+  }
+  return false;
+}
+
+// Implemented RemoveContact
+async function removeContact(_, { id }) {
+  const db = getDb();
+  const issue = await db.collection('contacts').findOne({ id });
+  if (!issue) return false;
+  issue.deleted = new Date();
+
+  let result = await db.collection('deleted_contacts').insertOne(issue);
+  if (result.insertedId) {
+    result = await db.collection('contacts').removeOne({ id });
+    return result.deletedCount === 1;
+  }
+  return false;
+}
+
+// Implemented RestoreContact
+async function restoreContact(_, { id }) {
+  const db = getDb();
+  const issue = await db.collection('deleted_contacts').findOne({ id });
+  if (!issue) return false;
+  issue.deleted = new Date();
+
+  let result = await db.collection('contacts').insertOne(issue);
+  if (result.insertedId) {
+    result = await db.collection('deleted_contacts').removeOne({ id });
     return result.deletedCount === 1;
   }
   return false;
@@ -183,7 +251,10 @@ module.exports = {
   restore: mustBeSignedIn(restore),
   counts,
 
-  getContact,
   listContact,
   addContact,
+  getContact,
+  updateContact,
+  removeContact,
+  restoreContact,
 };

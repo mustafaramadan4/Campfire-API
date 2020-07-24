@@ -4,8 +4,16 @@ const { mustBeSignedIn } = require('./auth.js');
 
 async function get(_, { id }) {
   const db = getDb();
+
   const issue = await db.collection('issues').findOne({ id });
   return issue;
+}
+
+async function getContact(_, { id }) {
+  const db = getDb();
+  
+  const contact = await db.collection('contacts').findOne({ id });
+  return contact;
 }
 
 const PAGE_SIZE = 10;
@@ -36,6 +44,23 @@ async function list(_, {
   return { issues, pages };
 }
 
+async function listContact(_, { activeStatus, page }) {
+  // it accepts activeStatus as an optional filter param
+  const db = getDb();
+  const filter = {};
+  // if activeStatus is passed in as query param, add it to the list of filters
+  if (activeStatus!==undefined) filter.activeStatus = activeStatus;
+  console.log(filter);
+  const cursor = db.collection('contacts').find(filter)
+  .sort({ name: 1})
+  .skip(PAGE_SIZE * (page - 1))
+  .limit(PAGE_SIZE);
+  const totalCount = await cursor.count(false);
+  const contacts = cursor.toArray();
+  const pages = Math.ceil(totalCount / PAGE_SIZE);
+  return { contacts, pages };
+}
+
 function validate(issue) {
   const errors = [];
   if (issue.title.length < 3) {
@@ -61,6 +86,20 @@ async function add(_, { issue }) {
   const savedIssue = await db.collection('issues')
     .findOne({ _id: result.insertedId });
   return savedIssue;
+}
+
+async function addContact(_, { contact }) {
+  const db = getDb();
+  // later add a validation method - at least one of the contact info field needs to be present
+
+  const newContact = Object.assign({}, contact);
+  // Object.assign creates a copy to the source from the target
+  newContact.id = await getNextSequence('contacts');
+
+  const result = await db.collection('contacts').insertOne(newContact);
+  const savedContact = await db.collection('contacts')
+    .findOne({ _id: result.insertedId });
+  return savedContact;
 }
 
 async function update(_, { id, changes }) {
@@ -143,4 +182,8 @@ module.exports = {
   delete: mustBeSignedIn(remove),
   restore: mustBeSignedIn(restore),
   counts,
+
+  getContact,
+  listContact,
+  addContact,
 };

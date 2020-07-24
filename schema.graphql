@@ -49,6 +49,7 @@ input IssueInputs {
   due: GraphQLDate
   description: String
 }
+
 """Inputs for issueUpdate: all are optional. Whichever is specified will
 be set to the given value, undefined fields will remain unmodified."""
 input IssueUpdateInputs {
@@ -59,6 +60,7 @@ input IssueUpdateInputs {
   due: GraphQLDate
   description: String
 }
+
 ##### Top level declarations
 type Query {
   about: String!
@@ -76,6 +78,12 @@ type Query {
     effortMin: Int
     effortMax: Int
   ): [IssueCounts!]!
+
+  contact(id: Int!): Contact!
+  contactList(
+    activeStatus: Boolean
+    page: Int = 1
+  ): ContactsWithPages
 }
 type Mutation {
   setAboutMessage(message: String!): String
@@ -83,4 +91,73 @@ type Mutation {
   issueUpdate(id: Int!, changes: IssueUpdateInputs!): Issue!
   issueDelete(id: Int!): Boolean!
   issueRestore(id: Int!): Boolean!
+
+  contactAdd(contact: ContactInputs!): Contact!
+}
+
+enum frequency {
+  Weekly
+  Biweekly
+  Monthly
+  Quarterly
+  Biannual
+  Yearly
+  None
+}
+
+enum priority {
+  low
+  medium
+  high
+}
+
+enum familiarity {
+  familiar
+  unfamiliar
+  intimate
+  meaningful
+}
+
+type Contact {
+  _id: ID!
+  id: Int!
+  name: String!
+  company: String
+  title: String
+  contactFrequency: frequency!
+  email: String
+  phone: String
+  LinkedIn: String
+  priority: priority
+  familiarity: familiarity
+  contextSpace: String
+  activeStatus: Boolean!
+  lastContactDate: GraphQLDate
+  nextContactDate: GraphQLDate
+  notes: String
+}
+
+type ContactsWithPages {
+  contacts: [Contact!]!
+  pages: Int
+}
+
+"Toned down contact, used as inputs"
+input ContactInputs {
+  name: String!
+  company: String
+  title: String
+  "if not supplied, will be set to 'None'"
+  contactFrequency: frequency = None
+  email: String
+  phone: String
+  LinkedIn: String
+  priority: priority
+  familiarity: familiarity
+  contextSpace: String
+  "if not supplied, will be set to 'true'"
+  activeStatus: Boolean = true
+  lastContactDate: GraphQLDate
+  nextContactDate: GraphQLDate
+  notes: String
 }

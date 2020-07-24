@@ -13,6 +13,9 @@ const resolvers = {
     issueList: issue.list,
     issue: issue.get,
     issueCounts: issue.counts,
+
+    contact: issue.getContact,
+    contactList: issue.listContact,
   },
   Mutation: {
     setAboutMessage: about.setMessage,

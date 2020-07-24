@@ -4,8 +4,16 @@ const { mustBeSignedIn } = require('./auth.js');
 
 async function get(_, { id }) {
   const db = getDb();
+
   const issue = await db.collection('issues').findOne({ id });
   return issue;
+}
+
+async function getContact(_, { id }) {
+  const db = getDb();
+  
+  const contact = await db.collection('contacts').findOne({ id });
+  return contact;
 }
 
 const PAGE_SIZE = 10;
@@ -34,6 +42,18 @@ async function list(_, {
   const issues = cursor.toArray();
   const pages = Math.ceil(totalCount / PAGE_SIZE);
   return { issues, pages };
+}
+
+async function listContact(_, { page }) {
+  const db = getDb();
+  const cursor = db.collection('contacts').find()
+  .sort({ name: 1})
+  .skip(PAGE_SIZE * (page - 1))
+  .limit(PAGE_SIZE);
+  const totalCount = await cursor.count(false);
+  const contacts = cursor.toArray();
+  const pages = Math.ceil(totalCount / PAGE_SIZE);
+  return { contacts, pages };
 }
 
 function validate(issue) {
@@ -143,4 +163,7 @@ module.exports = {
   delete: mustBeSignedIn(remove),
   restore: mustBeSignedIn(restore),
   counts,
+
+  getContact,
+  listContact,
 };

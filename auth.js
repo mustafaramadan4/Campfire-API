@@ -4,6 +4,7 @@ const { OAuth2Client } = require('google-auth-library');
 const jwt = require('jsonwebtoken');
 const { AuthenticationError } = require('apollo-server-express');
 const cors = require('cors');
+const { nonExecutableDefinitionMessage } = require('graphql/validation/rules/ExecutableDefinitions');
 
 let { JWT_SECRET } = process.env;
 

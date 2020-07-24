@@ -74,6 +74,27 @@ function validate(issue) {
   }
 }
 
+// Included validateContact function -- Email validation should be elsewhere?
+function validateContact(contact) {
+  const errors = [];
+  if (contact.name.length < 3) {
+    errors.push('Field "name" must be at least 3 characters long.');
+  }
+  if (contact.email.length === 0 && contact.phone.length === 0
+    && contact.Linkedin.lenght === 0) {
+    errors.push('At least one contact mean should be provided.');
+  }
+  if(contact.email.length > 0) {
+    let mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    if(!contact.email.match(mailformat)) {
+      errors.push('You have entered an invalid email address!');
+    }
+  }
+  if (errors.length > 0) {
+    throw new UserInputError('Invalid input(s)', { errors });
+  }
+}
+
 async function add(_, { issue }) {
   const db = getDb();
   validate(issue);
@@ -90,7 +111,8 @@ async function add(_, { issue }) {
 
 async function addContact(_, { contact }) {
   const db = getDb();
-  // later add a validation method - at least one of the contact info field needs to be present
+  // Added validation method for name and contact info (validate email)
+  validateContact(contact);
 
   const newContact = Object.assign({}, contact);
   // Object.assign creates a copy to the source from the target

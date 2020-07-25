@@ -223,6 +223,8 @@ async function updateContact(_, { id, changes }) {
       activated = true;
     }
     Object.assign(contact, changes);
+    // this will set the nextContacDate when activating/deactivating a contact
+    // from either the Edit view or the "on/off" button in Contacts view.
     changes.nextContactDate = setNextContactDate(contact, activated);
     validateContact(contact);
   }

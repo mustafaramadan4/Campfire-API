@@ -77,7 +77,7 @@ function validate(issue) {
   }
 }
 
-// Included validateContact function -- Email validation should be elsewhere?
+// Included phone validation
 function validateContact(contact) {
   const errors = [];
   if (contact.name.length < 3) {
@@ -91,6 +91,12 @@ function validateContact(contact) {
     let mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
     if(!contact.email.match(mailformat)) {
       errors.push('You have entered an invalid email address!');
+    }
+  }
+  if(contact.phone.length > 0) {
+    let phoneformat = /^\d{10}$/;
+    if(!contact.phone.match(mailformat)) {
+      errors.push('Phone number should be 10 digits');
     }
   }
   if (errors.length > 0) {

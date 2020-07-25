@@ -50,7 +50,7 @@ async function listContact(_, { activeStatus, search, page }) {
   const filter = {};
   // if activeStatus is passed in as query param, add it to the list of filters
   if (activeStatus!==undefined) filter.activeStatus = activeStatus;
-  console.log(filter);
+  //console.log("filter: " + filter);
 
   if (search) filter.$text = { $search: search };
 

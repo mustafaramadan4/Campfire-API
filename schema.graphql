@@ -168,6 +168,7 @@ input ContactInputs {
 """Inputs for contactUpdate: all are optional. Whichever is specified will
 be set to the given value, undefined fields will remain unmodified."""
 input ContactUpdateInputs {
+  name: String
   company: String
   title: String
   contactFrequency: frequency
@@ -176,6 +177,7 @@ input ContactUpdateInputs {
   LinkedIn: String
   priority: priority
   familiarity: familiarity
+  contextSpace: String
   activeStatus: Boolean
   lastContactDate: GraphQLDate
   nextContactDate: GraphQLDate

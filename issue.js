@@ -84,7 +84,7 @@ function validateContact(contact) {
     errors.push('Field "name" must be at least 3 characters long.');
   }
   if (contact.email.length === 0 && contact.phone.length === 0
-    && contact.Linkedin.length === 0) {
+    && contact.LinkedIn.length === 0) {
     errors.push('At least one contact mean should be provided.');
   }
   if(contact.email.length > 0) {

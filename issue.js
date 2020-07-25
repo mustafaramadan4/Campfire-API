@@ -113,33 +113,40 @@ async function add(_, { issue }) {
 }
 
 /*
-* TODO: trying to implement a function to set the nextContactDate as a function of
+* DONE: Implmented a function to set the nextContactDate as a function of
 * the activeStatus, contactFrequency, and the lastContactDate but it's more complicated that I thought.
-* 1. If there's no change in the already active status, set next date based on the last date.
+* 1. If there's no change in the already active status, set next date based on the last date. DONE
 * 2. If there's no change in the inactive status, don't do anything.
-* 3. If the active status goes from inactive to active, set next date based on today's date.
+* 3. If the active status goes from inactive to active, set next date based on today's date. DONE
 * 4. If the active status goes from active to inactive, don't do anything.
 */
 function setNextContactDate(contact, turnedActive) {
   // if there is no change in active status, set next date based on the last date.
-  // can this be compatible with a reconnect behavior? -> reconnect will set the lastContactDate to today's date,
+  // TODO: can this be compatible with a reconnect behavior? -> reconnect will set the lastContactDate to today's date,
   // and I'm setting the nextContactDate from that lastContactDate, so it should be okay.
+  // DONE: Initialized lastDate variable as the lastContactDate.
   let nextDate;
   if (contact.activeStatus === true && !turnedActive) {
+    let lastDate = new Date(contact.lastContactDate);
     if (!contact.lastContactDate) { lastDate = new Date(); }
     switch(contact.contactFrequency) {
       case "Weekly":
         nextDate = new Date(lastDate.getTime() + 1000 * 60 * 60 * 24 * 7);
         break;
       case "Biweekly":
+        nextDate = new Date(lastDate.getTime() + 1000 * 60 * 60 * 24 * 14);
         break;
       case "Monthly":
+        nextDate = new Date(lastDate.getTime() + 1000 * 60 * 60 * 24 * 30);
         break;
       case "Quarterly":
+        nextDate = new Date(lastDate.getTime() + 1000 * 60 * 60 * 24 * 91);
         break;
       case "Biannual":
+        nextDate = new Date(lastDate.getTime() + 1000 * 60 * 60 * 24 * 182);
         break;
       case "Yearly":
+        nextDate = new Date(lastDate.getTime() + 1000 * 60 * 60 * 24 * 365);
         break;
       case "None":
     }
@@ -150,14 +157,19 @@ function setNextContactDate(contact, turnedActive) {
         nextDate = new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 7);
         break;
       case "Biweekly":
+        nextDate = new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 14);
         break;
       case "Monthly":
+        nextDate = new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 30);
         break;
       case "Quarterly":
+        nextDate = new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 91);
         break;
       case "Biannual":
+        nextDate = new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 182);
         break;
       case "Yearly":
+        nextDate = new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 365);
         break;
       case "None":
     }
@@ -192,18 +204,26 @@ async function update(_, { id, changes }) {
   const savedIssue = await db.collection('issues').findOne({ id });
   return savedIssue;
 }
-// TODO: Add more changes
+
 async function updateContact(_, { id, changes }) {
   const db = getDb();
   if (changes.contactFrequency || changes.email
-      || changes.notes || changes.activeStatus) {
+      || changes.notes || changes.activeStatus || changes.name
+      || changes.name || changes.company || changes.title ||changes.phone
+      || changes.Linkedin || changes.priority || changes.familiarity
+      || changes.contextSpace) {
     const contact = await db.collection('contacts').findOne({ id });
-    /* TODO: maybe check if the changes.activeStatus === true,
-    * then we'd have to set the nextContactDate depending on the date the activeStatus
-    * turns from false to true, the not the recorded lastContactDate.
+    /* DONE: checked if the active status changed from inactive to active,
+     * then pass a boolean to setNextContactDate.
     */
+    let current = contact.activeStatus;  // old status
+    let news = changes.activeStatus;   // new status
+    let activated = false;  // Bool variable to hold whether status activated
+    if(current === false && news === true) {
+      activated = true;
+    }
     Object.assign(contact, changes);
-    changes.nextContactDate = setNextContactDate(contact, changes.activeStatus);
+    changes.nextContactDate = setNextContactDate(contact, activated);
     validateContact(contact);
   }
   await db.collection('contacts').updateOne({ id }, { $set: changes });

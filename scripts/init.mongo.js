@@ -14,6 +14,6 @@ db.contacts.createIndex({ activeStatus: 1 });
 db.contacts.createIndex({ name: 1 });
 db.contacts.createIndex({ nextContactDate: 1 });
 db.contacts.createIndex({ contactFrequency: 1 });
-db.contacts.createIndex({ title: 'text', notes: 'text' });
+db.contacts.createIndex({ name: 'text', notes: 'text' });
 
 // db.deleted_issues.createIndex({ id: 1 }, { unique: true });

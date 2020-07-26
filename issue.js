@@ -1,7 +1,7 @@
 const { UserInputError } = require('apollo-server-express');
 const { getDb, getNextSequence } = require('./db.js');
 const { mustBeSignedIn } = require('./auth.js');
-{/*commit check SHH */}
+
 async function get(_, { id }) {
   const db = getDb();
 
@@ -137,6 +137,7 @@ function setNextContactDate(contact, turnedActive) {
   // and I'm setting the nextContactDate from that lastContactDate, so it should be okay.
   // DONE: Initialized lastDate variable as the lastContactDate.
   let nextDate;
+  let newActiveStatus;
   if (contact.activeStatus === true && !turnedActive) {
     let lastDate = new Date(contact.lastContactDate);
     if (!contact.lastContactDate) { lastDate = new Date(); }
@@ -160,6 +161,8 @@ function setNextContactDate(contact, turnedActive) {
         nextDate = new Date(lastDate.getTime() + 1000 * 60 * 60 * 24 * 365);
         break;
       case "None":
+        newActiveStatus= false;
+        break;
     }
   } else if (turnedActive === true) {
   // when the user now turns on the active status, set the next date from today's date.
@@ -183,10 +186,15 @@ function setNextContactDate(contact, turnedActive) {
         nextDate = new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 365);
         break;
       case "None":
+        newActiveStatus= false;
+        break;
     }
   }
   console.log(nextDate);
-  return nextDate; 
+  // newActiveStatus changes only if user selects "None" on contact frequency, otherwise
+  // active status remains the same as what was passed in via turnedActive.
+  newActiveStatus = (newActiveStatus === false ? false: true)
+  return {nextDate, newActiveStatus}; 
 }
 
 async function addContact(_, { contact }) {
@@ -236,7 +244,14 @@ async function updateContact(_, { id, changes }) {
     Object.assign(contact, changes);
     // this will set the nextContacDate when activating/deactivating a contact
     // from either the Edit view or the "on/off" button in Contacts view.
-    changes.nextContactDate = setNextContactDate(contact, activated);
+    // changes.nextContactDate = setNextContactDate(contact, activated);
+    // DONE: Changed so that when user selects "None" for contact frequncy
+    // and hits submit, the active status is set to "Inactive"
+    // TO DO: May need to consider tying UI activeStatusto change immedaitely when user
+    // selects "None".
+    const { nextDate, newActiveStatus } = setNextContactDate(contact, activated);
+    changes.nextContactDate = nextDate;
+    changes.activeStatus = newActiveStatus;
     validateContact(contact);
   }
   await db.collection('contacts').updateOne({ id }, { $set: changes });

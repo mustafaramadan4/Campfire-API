@@ -95,8 +95,13 @@ function validateContact(contact) {
   }
   if(contact.phone.length > 0) {
     let phoneformat = /^\d{10}$/;
-    if(!contact.phone.match(mailformat)) {
-      errors.push('Phone number should be 10 digits');
+    if(!contact.phone.match(phoneformat)) {
+      errors.push('Phone number should be 10 digits!');
+    }
+  }
+  if(contact.LinkedIn.length > 0) {
+    if(!contact.LinkedIn.includes("linkedin.com/")) {
+      errors.push('You have entered an invalid linkedin adress!');
     }
   }
   if (errors.length > 0) {

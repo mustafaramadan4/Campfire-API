@@ -44,12 +44,18 @@ async function list(_, {
   return { issues, pages };
 }
 
-async function listContact(_, { activeStatus, search, page }) {
+async function listContact(_, {
+  activeStatus, contactFrequency, priority, familiarity, search, page
+}) {
   // it accepts activeStatus as an optional filter param
   const db = getDb();
   const filter = {};
   // if activeStatus is passed in as query param, add it to the list of filters
+  // Passed more possible filters
   if (activeStatus!==undefined) filter.activeStatus = activeStatus;
+  if (contactFrequency!==undefined) filter.contactFrequency = contactFrequency;
+  if (priority!==undefined) filter.priority = priority;
+  if (familiarity!==undefined) filter.familiarity = familiarity;
   //console.log("filter: " + filter);
 
   if (search) filter.$text = { $search: search };

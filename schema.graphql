@@ -81,6 +81,9 @@ type Query {
 
   contact(id: Int!): Contact!
   contactList(
+    contactFrequency: frequency
+    priority: priority
+    familiarity: familiarity
     activeStatus: Boolean
     page: Int = 1
   ): ContactsWithPages

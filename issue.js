@@ -99,12 +99,17 @@ function validateContact(contact) {
       errors.push('You have entered an invalid email address!');
     }
   }
-  if(contact.phone.length > 0) {
-    let phoneformat = /^\d{10}$/;
-    if(!contact.phone.match(phoneformat)) {
-      errors.push('Phone number should be 10 digits!');
-    }
-  }
+  /*
+  * TODO: I temporarily commented the phone number validation out as it introduced some error,
+  * 1. Variable "$changes" got invalid value 1212341234 at "changes.phone"; Expected type String. String cannot represent a non string value: 1212341234
+  * 2. Wouldn't let us edit the phone number in the database that's already in the format of 000-000-0000
+  */
+  // if(contact.phone.length > 0) {
+  //   let phoneformat = /^\d{10}$/;
+  //   if(!contact.phone.match(phoneformat)) {
+  //     errors.push('Phone number should be 10 digits!');
+  //   }
+  // }
   if(contact.LinkedIn.length > 0) {
     if(!contact.LinkedIn.includes("linkedin.com/")) {
       errors.push('You have entered an invalid linkedin adress!');
@@ -133,6 +138,10 @@ async function add(_, { issue }) {
 * DONE: Implmented a function to set the nextContactDate as a function of
 * the activeStatus, contactFrequency, and the lastContactDate but it's more complicated that I thought.
 * 1. If there's no change in the already active status, set next date based on the last date. DONE
+
+* 1.1 TODO: If there's a change in the contactFreq already in the active status, since it only sets it based on the last date,
+* it can set it on the past. e.g. Agnesse Caigg, it sets to Fri Mar 13 2020 if change the contactFreq to Quarterly.
+
 * 2. If there's no change in the inactive status, don't do anything.
 * 3. If the active status goes from inactive to active, set next date based on today's date. DONE
 * 4. If the active status goes from active to inactive, don't do anything.
@@ -142,65 +151,75 @@ function setNextContactDate(contact, turnedActive) {
   // TODO: can this be compatible with a reconnect behavior? -> reconnect will set the lastContactDate to today's date,
   // and I'm setting the nextContactDate from that lastContactDate, so it should be okay.
   // DONE: Initialized lastDate variable as the lastContactDate.
+  
+  /* TODO: weird behaviors found.
+  * 1. when setting the contact "inactive" on the "edit" page, 
+  * it sets the nextContactDate to null but the active status turns Inactive to Active again.
+  * 2. when manually setting the nextContactDate, it doesn't take it and set it to a date
+  * based on the contactFrequency and the lastContactDate. e.g. Agnesse Caigg, it sets to Fri Dec 20 2019
+  */
+
   let nextDate;
   let newActiveStatus;
-  if (contact.activeStatus === true && !turnedActive) {
-    let lastDate = new Date(contact.lastContactDate);
-    if (!contact.lastContactDate) { lastDate = new Date(); }
-    switch(contact.contactFrequency) {
-      case "Weekly":
-        nextDate = new Date(lastDate.getTime() + 1000 * 60 * 60 * 24 * 7);
-        break;
-      case "Biweekly":
-        nextDate = new Date(lastDate.getTime() + 1000 * 60 * 60 * 24 * 14);
-        break;
-      case "Monthly":
-        nextDate = new Date(lastDate.getTime() + 1000 * 60 * 60 * 24 * 30);
-        break;
-      case "Quarterly":
-        nextDate = new Date(lastDate.getTime() + 1000 * 60 * 60 * 24 * 91);
-        break;
-      case "Biannual":
-        nextDate = new Date(lastDate.getTime() + 1000 * 60 * 60 * 24 * 182);
-        break;
-      case "Yearly":
-        nextDate = new Date(lastDate.getTime() + 1000 * 60 * 60 * 24 * 365);
-        break;
-      case "None":
-        newActiveStatus= false;
-        break;
-    }
-  } else if (turnedActive === true) {
-  // when the user now turns on the active status, set the next date from today's date.
-    switch(contact.contactFrequency) {
-      case "Weekly":
-        nextDate = new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 7);
-        break;
-      case "Biweekly":
-        nextDate = new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 14);
-        break;
-      case "Monthly":
-        nextDate = new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 30);
-        break;
-      case "Quarterly":
-        nextDate = new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 91);
-        break;
-      case "Biannual":
-        nextDate = new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 182);
-        break;
-      case "Yearly":
-        nextDate = new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 365);
-        break;
-      case "None":
-        newActiveStatus= false;
-        break;
+  if (true) { // TODO: needs a condition to check if the user's trying to set the nextContactDate manually.
+    if (contact.activeStatus === true && !turnedActive) {
+      let lastDate = new Date(contact.lastContactDate);
+      if (!contact.lastContactDate) { lastDate = new Date(); }
+      switch(contact.contactFrequency) {
+        case "Weekly":
+          nextDate = new Date(lastDate.getTime() + 1000 * 60 * 60 * 24 * 7);
+          break;
+        case "Biweekly":
+          nextDate = new Date(lastDate.getTime() + 1000 * 60 * 60 * 24 * 14);
+          break;
+        case "Monthly":
+          nextDate = new Date(lastDate.getTime() + 1000 * 60 * 60 * 24 * 30);
+          break;
+        case "Quarterly":
+          nextDate = new Date(lastDate.getTime() + 1000 * 60 * 60 * 24 * 91);
+          break;
+        case "Biannual":
+          nextDate = new Date(lastDate.getTime() + 1000 * 60 * 60 * 24 * 182);
+          break;
+        case "Yearly":
+          nextDate = new Date(lastDate.getTime() + 1000 * 60 * 60 * 24 * 365);
+          break;
+        case "None":
+          newActiveStatus= false;
+          break;
+      }
+    } else if (turnedActive === true) {
+    // when the user now turns on the active status, set the next date from today's date.
+      switch(contact.contactFrequency) {
+        case "Weekly":
+          nextDate = new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 7);
+          break;
+        case "Biweekly":
+          nextDate = new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 14);
+          break;
+        case "Monthly":
+          nextDate = new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 30);
+          break;
+        case "Quarterly":
+          nextDate = new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 91);
+          break;
+        case "Biannual":
+          nextDate = new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 182);
+          break;
+        case "Yearly":
+          nextDate = new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 365);
+          break;
+        case "None":
+          newActiveStatus= false;
+          break;
+      }
     }
   }
   console.log(nextDate);
   // newActiveStatus changes only if user selects "None" on contact frequency, otherwise
   // active status remains the same as what was passed in via turnedActive.
   newActiveStatus = (newActiveStatus === false ? false: true)
-  return {nextDate, newActiveStatus}; 
+  return {nextDate, newActiveStatus};
 }
 
 async function addContact(_, { contact }) {
@@ -251,10 +270,18 @@ async function updateContact(_, { id, changes }) {
     // this will set the nextContacDate when activating/deactivating a contact
     // from either the Edit view or the "on/off" button in Contacts view.
     // changes.nextContactDate = setNextContactDate(contact, activated);
+
     // DONE: Changed so that when user selects "None" for contact frequncy
     // and hits submit, the active status is set to "Inactive"
-    // TO DO: May need to consider tying UI activeStatusto change immedaitely when user
+    // TO DO: May need to consider tying UI activeStatus to change immedaitely when user
     // selects "None".
+    /* 
+    * TODO: Above logic works one way, once the user selects none it's permanently marked inactive.
+    * so the toggle button still prints out "activated contact successfully", but the field remains inactive.
+    * Then when you manually go in and select "Active", it only turns the status to "Active" without the date being set.
+    * When you submit again, then it sets the nextContactDate to e.g. Agnesse Caigg's nextContactDate to Fri Dec 20 2019.
+    * So it somehow requires two edit submits for the date to show up.
+    */ 
     const { nextDate, newActiveStatus } = setNextContactDate(contact, activated);
     changes.nextContactDate = nextDate;
     changes.activeStatus = newActiveStatus;

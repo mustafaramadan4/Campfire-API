@@ -85,6 +85,7 @@ type Query {
     priority: priority
     familiarity: familiarity
     activeStatus: Boolean
+    search: String
     page: Int = 1
   ): ContactsWithPages
 }

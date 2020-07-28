@@ -74,6 +74,36 @@ function validateContact(contact) {
   }
 }
 
+/* Helper function to generate all dates required
+ * @param frequency : contactFrequency
+ * @param baseDate: a Date object used as base to generate new date
+ * @return : New Date() object
+ */
+function generateDates(frequency, baseDate) {
+  let nextDate;
+  switch(frequency) {
+    case "Weekly":
+      nextDate = new Date(baseDate.getTime() + 1000 * 60 * 60 * 24 * 7);
+      break;
+    case "Biweekly":
+      nextDate = new Date(baseDate.getTime() + 1000 * 60 * 60 * 24 * 14);
+      break;
+    case "Monthly":
+      nextDate = new Date(baseDate.getTime() + 1000 * 60 * 60 * 24 * 30);
+      break;
+    case "Quarterly":
+      nextDate = new Date(baseDate.getTime() + 1000 * 60 * 60 * 24 * 91);
+      break;
+    case "Biannual":
+      nextDate = new Date(baseDate.getTime() + 1000 * 60 * 60 * 24 * 182);
+      break;
+    case "Yearly":
+      nextDate = new Date(baseDate.getTime() + 1000 * 60 * 60 * 24 * 365);
+      break;
+  }
+  return nextDate;
+}
+
 /*
 * DONE: Implmented a function to set the nextContactDate as a function of
 * the activeStatus, contactFrequency, and the lastContactDate but it's more complicated that I thought.
@@ -91,9 +121,9 @@ function setNextContactDate(contact, turnedActive, manualDateChange, newActiveSt
   * it sets the nextContactDate to null but the active status turns Inactive to Active again
   * ***FIXED: 2. when manually setting the nextContactDate, it doesn't take it and set it to a date
   * based on the contactFrequency and the lastContactDate. e.g. Agnesse Caigg, it sets to Fri Dec 20 2019
-  * 3. if there's a change in the contactFreq already in the active status, since it only sets it based on the last date,
+  * *** FIXED: 3. if there's a change in the contactFreq already in the active status, since it only sets it based on the last date,
   * it can set it on the past. e.g. Agnesse Caigg, it sets to Fri Mar 13 2020 if change the contactFreq to Quarterly.
-  * 4. PEDRO! ugh so I think you fixed the behavior where we had to submit "twice" to fully update a field,
+  * *** FIXED: 4. PEDRO! ugh so I think you fixed the behavior where we had to submit "twice" to fully update a field,
   * it's happening again in a case where the user sets the date manually with a custom date, and change the contactFrequency
   * back to one of the weekly/monthly/etc options, it doesn't change the date automatically. dm me if you see this comment.
   */
@@ -105,56 +135,64 @@ function setNextContactDate(contact, turnedActive, manualDateChange, newActiveSt
     if (contact.activeStatus === true && !turnedActive) {
       let lastDate = new Date(contact.lastContactDate);
       if (!contact.lastContactDate) { lastDate = new Date(); }
-      switch(contact.contactFrequency) {
-        case "Weekly":
-          nextDate = new Date(lastDate.getTime() + 1000 * 60 * 60 * 24 * 7);
-          break;
-        case "Biweekly":
-          nextDate = new Date(lastDate.getTime() + 1000 * 60 * 60 * 24 * 14);
-          break;
-        case "Monthly":
-          nextDate = new Date(lastDate.getTime() + 1000 * 60 * 60 * 24 * 30);
-          break;
-        case "Quarterly":
-          nextDate = new Date(lastDate.getTime() + 1000 * 60 * 60 * 24 * 91);
-          break;
-        case "Biannual":
-          nextDate = new Date(lastDate.getTime() + 1000 * 60 * 60 * 24 * 182);
-          break;
-        case "Yearly":
-          nextDate = new Date(lastDate.getTime() + 1000 * 60 * 60 * 24 * 365);
-          break;
-        case "None":
-          // TODO: This doesn't allow a toggle button activation, a reverse of the noted weird behavior 1. above.
-          newActiveStatus= false;
-          break;
+      // Generate the date using last contac Date
+      nextDate = generateDates(contact.contactFrequency, lastDate);
+      // If the new Date is in the past, set the base date as today and recalculate
+      if(nextDate < new Date()) {
+        nextDate = generateDates(contact.contactFrequency, new Date());
       }
+      // switch(contact.contactFrequency) {
+      //   case "Weekly":
+      //     nextDate = new Date(lastDate.getTime() + 1000 * 60 * 60 * 24 * 7);
+      //     break;
+      //   case "Biweekly":
+      //     nextDate = new Date(lastDate.getTime() + 1000 * 60 * 60 * 24 * 14);
+      //     break;
+      //   case "Monthly":
+      //     nextDate = new Date(lastDate.getTime() + 1000 * 60 * 60 * 24 * 30);
+      //     break;
+      //   case "Quarterly":
+      //     nextDate = new Date(lastDate.getTime() + 1000 * 60 * 60 * 24 * 91);
+      //     break;
+      //   case "Biannual":
+      //     nextDate = new Date(lastDate.getTime() + 1000 * 60 * 60 * 24 * 182);
+      //     break;
+      //   case "Yearly":
+      //     nextDate = new Date(lastDate.getTime() + 1000 * 60 * 60 * 24 * 365);
+      //     break;
+      //   case "None":
+      //     // TODO: This doesn't allow a toggle button activation, a reverse of the noted weird behavior 1. above.
+      //     newActiveStatus= false;
+      //     break;
+      // }
     } else if (turnedActive === true) {
     // when the user now turns on the active status, set the next date from today's date.
       console.log("now turned active, setting the next contact date based on today's date");
-      switch(contact.contactFrequency) {
-        case "Weekly":
-          nextDate = new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 7);
-          break;
-        case "Biweekly":
-          nextDate = new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 14);
-          break;
-        case "Monthly":
-          nextDate = new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 30);
-          break;
-        case "Quarterly":
-          nextDate = new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 91);
-          break;
-        case "Biannual":
-          nextDate = new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 182);
-          break;
-        case "Yearly":
-          nextDate = new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 365);
-          break;
-        case "None":
-          newActiveStatus= false;
-          break;
-      }
+      // Call generate date using today as the base
+      nextDate = generateDates(contact.contactFrequency, new Date());
+      // switch(contact.contactFrequency) {
+      //   case "Weekly":
+      //     nextDate = new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 7);
+      //     break;
+      //   case "Biweekly":
+      //     nextDate = new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 14);
+      //     break;
+      //   case "Monthly":
+      //     nextDate = new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 30);
+      //     break;
+      //   case "Quarterly":
+      //     nextDate = new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 91);
+      //     break;
+      //   case "Biannual":
+      //     nextDate = new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 182);
+      //     break;
+      //   case "Yearly":
+      //     nextDate = new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 365);
+      //     break;
+      //   case "None":
+      //     newActiveStatus= false;
+      //     break;
+      // }
     }
   } else {  // if manualDateChange is true, don't modify the contactNextDate
     nextDate = contact.nextContactDate;
@@ -199,12 +237,12 @@ async function updateContact(_, { id, changes }) {
       activated = true;
     }
     let manualDateChange = false;
-    if (contact.nextContactDate != null) {
+    if (contact.nextContactDate !== null) {
       if (contact.nextContactDate.getTime() !== changes.nextContactDate.getTime()) {
         manualDateChange = true;
       }
     }
-    if (contact.contactFrequency === "Custom") {
+    if (contact.contactFrequency === "Custom" && changes.contactFrequency === "Custom") {
       // DONE: I need to make the custom date persist, cos it sets the custom date but goes away on a second submit.
       manualDateChange = true;
     }

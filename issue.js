@@ -146,21 +146,21 @@ async function add(_, { issue }) {
 * 3. If the active status goes from inactive to active, set next date based on today's date. DONE
 * 4. If the active status goes from active to inactive, don't do anything.
 */
-function setNextContactDate(contact, turnedActive) {
+function setNextContactDate(contact, turnedActive, newActiveStatus) {
   // if there is no change in active status, set next date based on the last date.
   // TODO: can this be compatible with a reconnect behavior? -> reconnect will set the lastContactDate to today's date,
   // and I'm setting the nextContactDate from that lastContactDate, so it should be okay.
   // DONE: Initialized lastDate variable as the lastContactDate.
   
   /* TODO: weird behaviors found.
-  * 1. when setting the contact "inactive" on the "edit" page, 
-  * it sets the nextContactDate to null but the active status turns Inactive to Active again.
+  * ***FIXED: 1. when setting the contact "inactive" on the "edit" page, 
+  * it sets the nextContactDate to null but the active status turns Inactive to Active again
   * 2. when manually setting the nextContactDate, it doesn't take it and set it to a date
   * based on the contactFrequency and the lastContactDate. e.g. Agnesse Caigg, it sets to Fri Dec 20 2019
   */
 
   let nextDate;
-  let newActiveStatus;
+  // let newActiveStatus;
   if (true) { // TODO: needs a condition to check if the user's trying to set the nextContactDate manually.
     if (contact.activeStatus === true && !turnedActive) {
       let lastDate = new Date(contact.lastContactDate);
@@ -218,7 +218,7 @@ function setNextContactDate(contact, turnedActive) {
   console.log(nextDate);
   // newActiveStatus changes only if user selects "None" on contact frequency, otherwise
   // active status remains the same as what was passed in via turnedActive.
-  newActiveStatus = (newActiveStatus === false ? false: true)
+  // newActiveStatus = (newActiveStatus === false ? false: true)
   return {nextDate, newActiveStatus};
 }
 
@@ -278,11 +278,12 @@ async function updateContact(_, { id, changes }) {
     /* 
     * TODO: Above logic works one way, once the user selects none it's permanently marked inactive.
     * so the toggle button still prints out "activated contact successfully", but the field remains inactive.
+    * WOULD NOT BE EASY TO GET RID OF "NONE" FREQUENCY, IF THE USER DOESN'T WANT TO CONTACT THE USER THEN DEACTIVATE IT.
     * Then when you manually go in and select "Active", it only turns the status to "Active" without the date being set.
     * When you submit again, then it sets the nextContactDate to e.g. Agnesse Caigg's nextContactDate to Fri Dec 20 2019.
     * So it somehow requires two edit submits for the date to show up.
     */ 
-    const { nextDate, newActiveStatus } = setNextContactDate(contact, activated);
+    const { nextDate, newActiveStatus } = setNextContactDate(contact, activated, news);
     changes.nextContactDate = nextDate;
     changes.activeStatus = newActiveStatus;
     validateContact(contact);

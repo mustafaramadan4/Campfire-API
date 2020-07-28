@@ -89,10 +89,13 @@ function setNextContactDate(contact, turnedActive, manualDateChange, newActiveSt
   /* TODO: weird behaviors found.
   * ***FIXED: 1. when setting the contact "inactive" on the "edit" page, 
   * it sets the nextContactDate to null but the active status turns Inactive to Active again
-  * 2. when manually setting the nextContactDate, it doesn't take it and set it to a date
+  * ***FIXED: 2. when manually setting the nextContactDate, it doesn't take it and set it to a date
   * based on the contactFrequency and the lastContactDate. e.g. Agnesse Caigg, it sets to Fri Dec 20 2019
   * 3. if there's a change in the contactFreq already in the active status, since it only sets it based on the last date,
-* it can set it on the past. e.g. Agnesse Caigg, it sets to Fri Mar 13 2020 if change the contactFreq to Quarterly.
+  * it can set it on the past. e.g. Agnesse Caigg, it sets to Fri Mar 13 2020 if change the contactFreq to Quarterly.
+  * 4. PEDRO! ugh so I think you fixed the behavior where we had to submit "twice" to fully update a field,
+  * it's happening again in a case where the user sets the date manually with a custom date, and change the contactFrequency
+  * back to one of the weekly/monthly/etc options, it doesn't change the date automatically. dm me if you see this comment.
   */
 
   let nextDate;
@@ -122,6 +125,7 @@ function setNextContactDate(contact, turnedActive, manualDateChange, newActiveSt
           nextDate = new Date(lastDate.getTime() + 1000 * 60 * 60 * 24 * 365);
           break;
         case "None":
+          // TODO: This doesn't allow a toggle button activation, a reverse of the noted weird behavior 1. above.
           newActiveStatus= false;
           break;
       }
@@ -199,6 +203,10 @@ async function updateContact(_, { id, changes }) {
       if (contact.nextContactDate.getTime() !== changes.nextContactDate.getTime()) {
         manualDateChange = true;
       }
+    }
+    if (contact.contactFrequency === "Custom") {
+      // DONE: I need to make the custom date persist, cos it sets the custom date but goes away on a second submit.
+      manualDateChange = true;
     }
     console.log("contact.nextContactDate: " + contact.nextContactDate);
     console.log("changes.nextContactDate: " + changes.nextContactDate);

@@ -109,6 +109,7 @@ enum frequency {
   Biannual
   Yearly
   None
+  Custom
 }
 
 enum priority {

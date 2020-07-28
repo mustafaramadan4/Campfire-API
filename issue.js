@@ -2,13 +2,6 @@ const { UserInputError } = require('apollo-server-express');
 const { getDb, getNextSequence } = require('./db.js');
 const { mustBeSignedIn } = require('./auth.js');
 
-async function get(_, { id }) {
-  const db = getDb();
-
-  const issue = await db.collection('issues').findOne({ id });
-  return issue;
-}
-
 async function getContact(_, { id }) {
   const db = getDb();
   
@@ -17,32 +10,6 @@ async function getContact(_, { id }) {
 }
 
 const PAGE_SIZE = 10;
-
-async function list(_, {
-  status, effortMin, effortMax, search, page,
-}) {
-  const db = getDb();
-  const filter = {};
-
-  if (status) filter.status = status;
-
-  if (effortMin !== undefined || effortMax !== undefined) {
-    filter.effort = {};
-    if (effortMin !== undefined) filter.effort.$gte = effortMin;
-    if (effortMax !== undefined) filter.effort.$lte = effortMax;
-  }
-  if (search) filter.$text = { $search: search };
-
-  const cursor = db.collection('issues').find(filter)
-    .sort({ id: 1 })
-    .skip(PAGE_SIZE * (page - 1))
-    .limit(PAGE_SIZE);
-
-  const totalCount = await cursor.count(false);
-  const issues = cursor.toArray();
-  const pages = Math.ceil(totalCount / PAGE_SIZE);
-  return { issues, pages };
-}
 
 async function listContact(_, {
   activeStatus, contactFrequency, priority, familiarity, search, page
@@ -68,19 +35,6 @@ async function listContact(_, {
   const contacts = cursor.toArray();
   const pages = Math.ceil(totalCount / PAGE_SIZE);
   return { contacts, pages };
-}
-
-function validate(issue) {
-  const errors = [];
-  if (issue.title.length < 3) {
-    errors.push('Field "title" must be at least 3 characters long.');
-  }
-  if (issue.status === 'Assigned' && !issue.owner) {
-    errors.push('Field "owner" is required when status is "Assigned"');
-  }
-  if (errors.length > 0) {
-    throw new UserInputError('Invalid input(s)', { errors });
-  }
 }
 
 // Included phone validation
@@ -120,36 +74,16 @@ function validateContact(contact) {
   }
 }
 
-async function add(_, { issue }) {
-  const db = getDb();
-  validate(issue);
-
-  const newIssue = Object.assign({}, issue);
-  newIssue.created = new Date();
-  newIssue.id = await getNextSequence('issues');
-
-  const result = await db.collection('issues').insertOne(newIssue);
-  const savedIssue = await db.collection('issues')
-    .findOne({ _id: result.insertedId });
-  return savedIssue;
-}
-
 /*
 * DONE: Implmented a function to set the nextContactDate as a function of
 * the activeStatus, contactFrequency, and the lastContactDate but it's more complicated that I thought.
 * 1. If there's no change in the already active status, set next date based on the last date. DONE
-
-* 1.1 TODO: If there's a change in the contactFreq already in the active status, since it only sets it based on the last date,
-* it can set it on the past. e.g. Agnesse Caigg, it sets to Fri Mar 13 2020 if change the contactFreq to Quarterly.
-
 * 2. If there's no change in the inactive status, don't do anything.
 * 3. If the active status goes from inactive to active, set next date based on today's date. DONE
 * 4. If the active status goes from active to inactive, don't do anything.
 */
 function setNextContactDate(contact, turnedActive, newActiveStatus) {
   // if there is no change in active status, set next date based on the last date.
-  // TODO: can this be compatible with a reconnect behavior? -> reconnect will set the lastContactDate to today's date,
-  // and I'm setting the nextContactDate from that lastContactDate, so it should be okay.
   // DONE: Initialized lastDate variable as the lastContactDate.
   
   /* TODO: weird behaviors found.
@@ -157,6 +91,8 @@ function setNextContactDate(contact, turnedActive, newActiveStatus) {
   * it sets the nextContactDate to null but the active status turns Inactive to Active again
   * 2. when manually setting the nextContactDate, it doesn't take it and set it to a date
   * based on the contactFrequency and the lastContactDate. e.g. Agnesse Caigg, it sets to Fri Dec 20 2019
+  * 3. if there's a change in the contactFreq already in the active status, since it only sets it based on the last date,
+* it can set it on the past. e.g. Agnesse Caigg, it sets to Fri Mar 13 2020 if change the contactFreq to Quarterly.
   */
 
   let nextDate;
@@ -293,21 +229,6 @@ async function updateContact(_, { id, changes }) {
   return savedContact;
 }
 
-async function remove(_, { id }) {
-  const db = getDb();
-  const issue = await db.collection('issues').findOne({ id });
-  if (!issue) return false;
-  issue.deleted = new Date();
-
-  let result = await db.collection('deleted_issues').insertOne(issue);
-  if (result.insertedId) {
-    result = await db.collection('issues').removeOne({ id });
-    return result.deletedCount === 1;
-  }
-  return false;
-}
-
-// Implemented RemoveContact
 async function removeContact(_, { id }) {
   const db = getDb();
   const issue = await db.collection('contacts').findOne({ id });
@@ -322,7 +243,6 @@ async function removeContact(_, { id }) {
   return false;
 }
 
-// Implemented RestoreContact
 async function restoreContact(_, { id }) {
   const db = getDb();
   const issue = await db.collection('deleted_contacts').findOne({ id });
@@ -332,20 +252,6 @@ async function restoreContact(_, { id }) {
   let result = await db.collection('contacts').insertOne(issue);
   if (result.insertedId) {
     result = await db.collection('deleted_contacts').removeOne({ id });
-    return result.deletedCount === 1;
-  }
-  return false;
-}
-
-async function restore(_, { id }) {
-  const db = getDb();
-  const issue = await db.collection('deleted_issues').findOne({ id });
-  if (!issue) return false;
-  issue.deleted = new Date();
-
-  let result = await db.collection('issues').insertOne(issue);
-  if (result.insertedId) {
-    result = await db.collection('deleted_issues').removeOne({ id });
     return result.deletedCount === 1;
   }
   return false;
@@ -384,13 +290,13 @@ async function counts(_, { status, effortMin, effortMax }) {
 }
 
 module.exports = {
-  list,
-  add: mustBeSignedIn(add),
-  get,
-  update: mustBeSignedIn(update),
-  delete: mustBeSignedIn(remove),
-  restore: mustBeSignedIn(restore),
-  counts,
+  // list,
+  // add: mustBeSignedIn(add),
+  // get,
+  // update: mustBeSignedIn(update),
+  // delete: mustBeSignedIn(remove),
+  // restore: mustBeSignedIn(restore),
+  // counts,
 
   listContact,
   addContact,

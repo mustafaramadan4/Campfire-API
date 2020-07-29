@@ -19,7 +19,14 @@ The user has the ability to perform CRUD operations in this webapplication which
 
 - <b>Read:</b> The user can view all of their contacts in the Contacts tab on the navigation bar. Upon this display, the user can view their contacts view all the field names described in our schema. These field names include: Name, Company, Title, Frequency, Email, LinkedIn, Priority, Familiarity, Context, Active Status.
 
-- <b>Update:</b> The user has the ability to access all contacts in their personalized contact book from the Contacts tab on the navigation bar. Once doing so, each contact will display an edit button to the right of their name, and by the user clicking on the edit button, the user will now have that chosen contacts edit page rendered on the screen. Any of the contacts fields can now be manipulated and resaved. 
+- <b>Update:</b> The user has the ability to access all contacts in their personalized contact book from the Contacts tab on the navigation bar. Once doing so, each contact will display an edit button to the right of their name, and by the user clicking on the edit button, the user will now have that chosen contacts edit page rendered on the screen. Any of the contacts fields can now be manipulated and resaved.  
+There's a considerable amount of logic involved in setting the nextContactDate for a specific contact, as it is a function of the activeStatus of the contact, contactFrequency the user selects, and the lastContactDate of the contact.
+  1. If there's no change in the already active status, set next date based on the last date.  
+    Do check if the newly set next date is in the past (from today's date) and if is, set the next date based on today's date.
+  1. If there's no change in the inactive status, don't do anything.
+  1. If the active status goes from inactive to active, set next date based on today's date.
+  1. If the active status goes from active to inactive, clear the nextContactDate.
+  1. Let the user choose a custom date he wants overriding the newContactDate that would be set from lastContactDate.
 
 - <b>Delete:</b> On the Contacts tab of the navigation bar, the user has the ability to delete any contact they no longer want. This can be done in the far right column on the Contacts page, i.e. Edit column. In the "Edit" column, the user will find an "Edit" button, an "Active/Inactive" Toggler, and a "Delete" button. The delete button when clicked will prompt a Toast message if a succesfful deletion of the contact occured. Also, similarly to delete, our web application implements an active status for each user. This allows the user to filter on contacts they still consider "active" and are wanting to reconnect with. Thus, the active/inactive toggler will update the specified contacts active status which in turn if "inactive" will set the "Next Contact Date" to null.
 

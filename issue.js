@@ -140,66 +140,16 @@ function setNextContactDate(contact, turnedActive, manualDateChange, newActiveSt
       if(nextDate < new Date()) {
         nextDate = generateDates(contact.contactFrequency, new Date());
       }
-      // switch(contact.contactFrequency) {
-      //   case "Weekly":
-      //     nextDate = new Date(lastDate.getTime() + 1000 * 60 * 60 * 24 * 7);
-      //     break;
-      //   case "Biweekly":
-      //     nextDate = new Date(lastDate.getTime() + 1000 * 60 * 60 * 24 * 14);
-      //     break;
-      //   case "Monthly":
-      //     nextDate = new Date(lastDate.getTime() + 1000 * 60 * 60 * 24 * 30);
-      //     break;
-      //   case "Quarterly":
-      //     nextDate = new Date(lastDate.getTime() + 1000 * 60 * 60 * 24 * 91);
-      //     break;
-      //   case "Biannual":
-      //     nextDate = new Date(lastDate.getTime() + 1000 * 60 * 60 * 24 * 182);
-      //     break;
-      //   case "Yearly":
-      //     nextDate = new Date(lastDate.getTime() + 1000 * 60 * 60 * 24 * 365);
-      //     break;
-      //   case "None":
-      //     // TODO: This doesn't allow a toggle button activation, a reverse of the noted weird behavior 1. above.
-      //     newActiveStatus= false;
-      //     break;
-      // }
     } else if (turnedActive === true) {
     // when the user now turns on the active status, set the next date from today's date.
       console.log("now turned active, setting the next contact date based on today's date");
       // Call generate date using today as the base
       nextDate = generateDates(contact.contactFrequency, new Date());
-      // switch(contact.contactFrequency) {
-      //   case "Weekly":
-      //     nextDate = new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 7);
-      //     break;
-      //   case "Biweekly":
-      //     nextDate = new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 14);
-      //     break;
-      //   case "Monthly":
-      //     nextDate = new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 30);
-      //     break;
-      //   case "Quarterly":
-      //     nextDate = new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 91);
-      //     break;
-      //   case "Biannual":
-      //     nextDate = new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 182);
-      //     break;
-      //   case "Yearly":
-      //     nextDate = new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 365);
-      //     break;
-      //   case "None":
-      //     newActiveStatus= false;
-      //     break;
-      // }
     }
   } else {  // if manualDateChange is true, don't modify the contactNextDate
     nextDate = contact.nextContactDate;
   }
   console.log(nextDate);
-  // newActiveStatus changes only if user selects "None" on contact frequency, otherwise
-  // active status remains the same as what was passed in via turnedActive.
-  // newActiveStatus = (newActiveStatus === false ? false: true)
   return {nextDate, newActiveStatus};
 }
 

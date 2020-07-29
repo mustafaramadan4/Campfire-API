@@ -15,7 +15,17 @@ Our group project is called <b>Campfire</b>. The purpose of this web application
 
 The user has the ability to perform CRUD operations in this webapplication which will be defined below.
 
-- <b>Create:</b> The user once logged in is has the ability to to create a contact on the top right (plus) icon of the navigation bar, and this will render a popup page which allows the user to input field such as name, as well as a required 1 of 3 contact information pieces (email, phonenumber, or linkedin). Each of these contact information fields have an implemented validation that must occur when the user inputs the data. For example, the linkedin field must require an input that contains the string "linkedin". Once the user creates the contact, it will render the edit page specific to that contact id created, and the user now has the ability to further add in more information and set a frequency date. The contact will now be set as "active" and the "last contact date" will be set as the date it was created.
+- <b>Create:</b> The user once logged in has the ability to to create a contact on the top right (plus) icon of the navigation bar, and this will render a popup page which allows the user to input field such as name, as well as a required 1 of 3 contact information pieces (email, phonenumber, or linkedin). Each of these contact information fields have an implemented validation that must occur when the user inputs the data. For example, the linkedin field must require an input that contains the string "linkedin". 
+
+
+
+
+
+
+
+
+
+ce the user creates the contact, it will render the edit page specific to that contact id created, and the user now has the ability to further add in more information and set a frequency date. The contact will now be set as "active" and the "last contact date" will be set as the date it was created.
 
 - <b>Read:</b> The user can view all of their contacts in the Contacts tab on the navigation bar. Upon this display, the user can view their contacts view all the field names described in our schema. These field names include: Name, Company, Title, Frequency, Email, LinkedIn, Priority, Familiarity, Context, Active Status.
 
@@ -35,7 +45,7 @@ In addition to the CRUD operations, our web application is set up as follows. Th
 
 - <b>Dashboard:</b> Disclaimer- Not fully implemented. But the idea is that the user's upcoming reminders (which could be remidners that are occuring within the week or day) will render on the Dashboard page. And upon clicking on the Reconnect button, this will reset the "Last Contact Date" to the present day the "Reconnect" button was clicked and reupdate the "Next Contact Date". And allows the user to update any information on that specific contact. This in turn will likely render that contact off of the dashboard page as the dashboard page assesses the upcoming contacts based off of "Next Contact Date".
 
-- <b>Contacts:</b> Includes all of the user's contacts they've set on this page. The page render 10 contacts at a time, and a next/prev button is located on the button of the page. The contacts page displays the user's contacts according to fields described above. In addition to the display as well as interactivity from the user in the form of the "Edit" button, "Active/Inactive Toggler", "Delete" button, the user has the ability to also filter which is found directly underneath the navigation bar. The user can filter via Active Status (Active/Inactive), Priority (Low, Medium, High), Frequency (Weekly, Biweekly, Monthly, Quarterly, Biannual, Yearly, Custom, None) and Familiarity(Familiar, Unfamiliar, Intimate, Meaningful). Once applying those filter, a subset of the contacts book will render on the screen of the COntacts page. The user has the ability to reset the filters to none (full contacts page rerenders).
+- <b>Contacts:</b> Includes all of the user's contacts they've set on this page. The page render 10 contacts at a time, and a next/prev navigation button is located on the button of the page. The contacts page displays the user's contacts according to fields described above. In addition to the display as well as interactivity from the user in the form of the "Edit" button, "Active/Inactive Toggler", "Delete" button, the user has the ability to also filter which is found directly underneath the navigation bar. The user can filter via Active Status (Active/Inactive), Priority (Low, Medium, High), Frequency (Weekly, Biweekly, Monthly, Quarterly, Biannual, Yearly, Custom) and Familiarity(Familiar, Unfamiliar, Intimate, Meaningful). Once applying those filter, a subset of the contacts book will render on the screen of the Contacts page. The user has the ability to reset the filters to none (full contacts page rerenders).
 
 <b>Interactive Functions Summary: </b> 
 - A search bar is implemented on every page which allows the user to query based off of the contact fields: name, company.

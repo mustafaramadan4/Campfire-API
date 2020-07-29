@@ -51,6 +51,7 @@ function validateContact(contact) {
     errors.push('At least one contact mean should be provided.');
   }
   if(contact.email !== null && contact.email.length > 0) {
+    console.log("IM EMAIL");
     let mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
     if(!contact.email.match(mailformat)) {
       errors.push('You have entered an invalid email address!');
@@ -192,7 +193,7 @@ async function updateContact(_, { id, changes }) {
       activated = true;
     }
     let manualDateChange = false;
-    if (contact.nextContactDate !== null) {
+    if (contact.nextContactDate !== null && changes.nextContactDate !== null) {
       if (contact.nextContactDate.getTime() !== changes.nextContactDate.getTime()) {
         manualDateChange = true;
       }

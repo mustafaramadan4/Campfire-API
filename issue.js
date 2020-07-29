@@ -46,7 +46,7 @@ function validateContact(contact) {
   if (contact.email === null && contact.phone === null && contact.LinkedIn === null) {
     errors.push('At least one contact mean should be provided.');
   }
-  if(contact.email !== null) {
+  if(contact.email !== null && contact.email.length > 0) {
     let mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
     if(!contact.email.match(mailformat)) {
       errors.push('You have entered an invalid email address!');

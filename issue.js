@@ -37,13 +37,17 @@ async function listContact(_, {
   return { contacts, pages };
 }
 
-// Included phone validation
 function validateContact(contact) {
   const errors = [];
   if (contact.name !== null && contact.name.length < 3) {
     errors.push('Field "name" must be at least 3 characters long.');
   }
-  if (contact.email === null && contact.phone === null && contact.LinkedIn === null) {
+  if ((contact.email === null &&
+    contact.phone === null &&
+    contact.LinkedIn === null) ||
+    (contact.email.length === 0 &&
+      contact.phone.length === 0 &&
+      contact.LinkedIn.length === 0)) {
     errors.push('At least one contact mean should be provided.');
   }
   if(contact.email !== null && contact.email.length > 0) {
@@ -63,7 +67,9 @@ function validateContact(contact) {
   //     errors.push('Phone number should be 10 digits!');
   //   }
   // }
-  if(contact.LinkedIn !== null) {
+  if(contact.LinkedIn !== null && contact.LinkedIn.length > 0) {
+    console.log("LINK" + contact.LinkedIn);
+    console.log("IM HERERERE");
     if(!contact.LinkedIn.includes("linkedin.com/")) {
       errors.push('You have entered an invalid linkedin address!');
     }

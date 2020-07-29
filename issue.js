@@ -40,14 +40,13 @@ async function listContact(_, {
 // Included phone validation
 function validateContact(contact) {
   const errors = [];
-  if (contact.name.length < 3) {
+  if (contact.name !== null && contact.name.length < 3) {
     errors.push('Field "name" must be at least 3 characters long.');
   }
-  if (contact.email.length === 0 && contact.phone.length === 0
-    && contact.LinkedIn.length === 0) {
+  if (contact.email === null && contact.phone === null && contact.LinkedIn === null) {
     errors.push('At least one contact mean should be provided.');
   }
-  if(contact.email.length > 0) {
+  if(contact.email !== null) {
     let mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
     if(!contact.email.match(mailformat)) {
       errors.push('You have entered an invalid email address!');
@@ -64,9 +63,9 @@ function validateContact(contact) {
   //     errors.push('Phone number should be 10 digits!');
   //   }
   // }
-  if(contact.LinkedIn.length > 0) {
+  if(contact.LinkedIn !== null) {
     if(!contact.LinkedIn.includes("linkedin.com/")) {
-      errors.push('You have entered an invalid linkedin adress!');
+      errors.push('You have entered an invalid linkedin address!');
     }
   }
   if (errors.length > 0) {
@@ -224,7 +223,7 @@ async function updateContact(_, { id, changes }) {
   if (changes.contactFrequency || changes.email
       || changes.notes || changes.activeStatus || changes.name
       || changes.name || changes.company || changes.title ||changes.phone
-      || changes.Linkedin || changes.priority || changes.familiarity
+      || changes.LinkedIn || changes.priority || changes.familiarity
       || changes.contextSpace) {
     const contact = await db.collection('contacts').findOne({ id });
     /* DONE: checked if the active status changed from inactive to active,

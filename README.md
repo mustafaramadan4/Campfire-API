@@ -10,7 +10,28 @@ You are currenly on the API repository for project Campfire.
 
 Our group project is called <b>Campfire</b>. The purpose of this web application is for a user to log into the webapp, and be able to add "contacts" into their personalized address book, and be able to set frequencies for how often they would like to reconnect with their contacts. Thus by using this webapp, the user will always be reconnecting with contacts in accordance to how often they want to reconnect with them. Forgetfulness is no longer a factor when using Campfire. The basis of this project has been created using the boilerplate code used from the MERN Stack Issue Tracker Book Project by Vasan Subramanian.
 
+---
+
 <h2> Iteration 1.0: </h2>
+
+
+#### Build and Run Instructions:
+To run and test our Iteration 1.0 application, please perform the following:
+ - Clone both the [API](https://github.ccs.neu.edu/NEU-CS5610-SU20/GroupProject_jsonStatham_API) and the [UI](https://github.ccs.neu.edu/NEU-CS5610-SU20/GroupProject_jsonStatham_UI) repositories to local machine.
+ - Please note that we have provided `sample.env` files in both the *API* and *UI* repositoires with the appropriate endpoint configurations necessary to run the application. Rename these files to `.env` in order for the applications to run properly.
+ - Navigate into the UI and API and run `npm install` in each to install all necessary dependencies
+ - If running on a Mac OS, open two terminal windows:
+    - In the first navigate to the *API* directory and run `npm start` to start the API.
+    - In the second navigate tothe *UI* directory and run `npm run dev-all`
+- If running on a Windows OS, open **three** terminal windows and execute in order:
+    - In the first, navigate to the *API* directory and run `npm start` to start the API.
+    - In the second, navigate to the *UI* directory and run `npm run watch-server-hmr` to watch files in the UI for hot module replacement recompilation.
+    - In the third, navigate to the *UI* directory adn run `npm start` to start the UI.
+
+Following these steps, you should be able to explore our web application and perform the basic CRUD operations.
+
+---
+
 <b>In this iteration, the following was implemented. </b>
 
 The user has the ability to perform CRUD operations in this webapplication which will be defined below.

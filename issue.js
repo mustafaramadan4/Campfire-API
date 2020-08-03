@@ -80,6 +80,17 @@ function validateContact(contact) {
   }
 }
 
+const WEEKLY = 7;
+const BIWEEKLY = 14;
+let MONTHLY = 31;
+const QUARTERLY = 91;
+const BIANNUAL = 182;
+const YEARLY = 365;
+
+function dateTemplate(baseDate, days) {
+  return new Date(baseDate.getTime() + 1000 * 60 * 60 * 24 * days);
+}
+
 /* Helper function to generate all dates required
  * @param frequency : contactFrequency
  * @param baseDate: a Date object used as base to generate new date
@@ -89,22 +100,35 @@ function generateDates(frequency, baseDate) {
   let nextDate;
   switch(frequency) {
     case "Weekly":
-      nextDate = new Date(baseDate.getTime() + 1000 * 60 * 60 * 24 * 7);
+      nextDate = dateTemplate(baseDate, WEEKLY);
       break;
     case "Biweekly":
-      nextDate = new Date(baseDate.getTime() + 1000 * 60 * 60 * 24 * 14);
+      nextDate = dateTemplate(baseDate, BIWEEKLY);
       break;
     case "Monthly":
-      nextDate = new Date(baseDate.getTime() + 1000 * 60 * 60 * 24 * 30);
+      console.log("baseMonth: " + baseDate.getMonth());
+      switch(baseDate.getMonth()) {
+        // DONE: implement monthly to 30 or 31 depending on the month.
+        // For some reason the getMonth() gives an integer one less than the actual month value,
+        // e.g. December gives 11, so I just hard coded the cases around it :p
+        case 1:
+        case 3:
+        case 5:
+        case 8:
+        case 10:
+          MONTHLY = 30;
+          break;
+      }
+      nextDate = dateTemplate(baseDate, MONTHLY);
       break;
     case "Quarterly":
-      nextDate = new Date(baseDate.getTime() + 1000 * 60 * 60 * 24 * 91);
+      nextDate = dateTemplate(baseDate, QUARTERLY);
       break;
     case "Biannual":
-      nextDate = new Date(baseDate.getTime() + 1000 * 60 * 60 * 24 * 182);
+      nextDate =dateTemplate(baseDate, BIANNUAL);
       break;
     case "Yearly":
-      nextDate = new Date(baseDate.getTime() + 1000 * 60 * 60 * 24 * 365);
+      nextDate = dateTemplate(baseDate, YEARLY);
       break;
   }
   return nextDate;

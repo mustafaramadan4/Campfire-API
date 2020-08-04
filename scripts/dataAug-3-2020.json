@@ -1,12 +1,4 @@
-// import {mockData} from './mockdata.js';
-
-/* global db print */
-/* eslint no-restricted-globals: "off" */
-
-
-////https://www.generatedata.com/
-
-const mockData = [
+[
 	{
 		"name": "Bruno Lester",
 		"contactFrequency": "Biannual",
@@ -1508,61 +1500,3 @@ const mockData = [
 		"ownerEmail": "hjyou07@gmail.com"
 	}
 ]
-
-
-/////  SCRIPT  //////
-
-function randomDate(start, end) {
-    return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()))
-}
-
-
-const initialCount = db.contacts.count();
-
-for (let i = 0; i < 100; i += 1) {
-
-  const id = initialCount + i + 1;
-  const name = mockData[i].name;
-  const contactFrequency = mockData[i].contactFrequency;
-  const email = mockData[i].email;
-  const phone = mockData[i].phone;
-  const LinkedIn = mockData[i].LinkedIn + name;
-  const priority = mockData[i].priority;
-  const familiarity = mockData[i].familiarity;
-  const contextSpace = mockData[i].contextSpace;
-  const activeStatus = mockData[i].activeStatus;
-  // Generate date between 2001 and present
-  const lastContactDate = randomDate(new Date(2001, 0, 1), new Date());
-  const notes = mockData[i].notes;
-  const company = mockData[i].company;
-  // Generate date between today and 2 years from today
-  const nextContactDate = randomDate(new Date(), new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 730));
-  const title = mockData[i].title + `${i}`;
-  const ownerEmail = mockData[i].ownerEmail;
-
-  const contact = {
-    id, 
-    name, 
-    contactFrequency, 
-    email, 
-    phone, 
-    LinkedIn, 
-    priority,
-    familiarity,
-    contextSpace,
-    activeStatus,
-    lastContactDate,
-    notes,
-    company,
-    nextContactDate,
-	title,
-	ownerEmail,
-  };
-
-  db.contacts.insertOne(contact);
-}
-
-const count = db.contacts.count();
-db.counters.update({ _id: 'contacts' }, { $set: { current: count } });
-
-print('New contacts count:', count);

@@ -28,19 +28,18 @@ async function listContact(_, {
   // SHH - Filter used in Dashboard.jsx to display nextContactDates that are due/
   // E.g. dates that are (<=) to today.
   if (nextContactDate!==undefined) {
-    filter.upcomingContactDates = {};
-    filter.upcomingContactDates.$lte = nextContactDate;
+    //TODO: Change the hardcoded number of days ahead maybe =S
+    nextContactDate = new Date(new Date().getTime() + (1000 * 60 * 60 * 24 * 14));
+    console.log(nextContactDate);
+    filter.nextContactDate = { $lte: nextContactDate };
     console.log("HELLLO PEOPLE")
   }
 
-  console.log("NEXT CONTACT DATE:", nextContactDate )
-  console.log("filter Upcoming Dates " + filter.upcomingContactDates);
-
   if (search) filter.$text = { $search: search };
 
-  const cursor = db.collection('contacts').find(filter)
   // SHH - This hardcoded  mongodb query works?
   // const cursor = db.collection('contacts').find({ nextContactDate: {$lte: new Date()}})
+  const cursor = db.collection('contacts').find(filter)
   .sort({ name: 1})
   .skip(PAGE_SIZE * (page - 1))
   .limit(PAGE_SIZE);

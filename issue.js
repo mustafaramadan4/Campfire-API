@@ -12,7 +12,7 @@ async function getContact(_, { id }) {
 const PAGE_SIZE = 10;
 
 async function listContact(_, {
-  ownerEmail, activeStatus, contactFrequency, priority, familiarity, search, page
+  ownerEmail, activeStatus, contactFrequency, priority, familiarity, nextContactDate, search, page
 }) {
   // it accepts activeStatus as an optional filter param
   const db = getDb();
@@ -25,11 +25,22 @@ async function listContact(_, {
   if (contactFrequency!==undefined) filter.contactFrequency = contactFrequency;
   if (priority!==undefined) filter.priority = priority;
   if (familiarity!==undefined) filter.familiarity = familiarity;
-  //console.log("filter: " + filter);
+  // SHH - Filter used in Dashboard.jsx to display nextContactDates that are due/
+  // E.g. dates that are (<=) to today.
+  if (nextContactDate!==undefined) {
+    filter.upcomingContactDates = {};
+    filter.upcomingContactDates.$lte = nextContactDate;
+    console.log("HELLLO PEOPLE")
+  }
+
+  console.log("NEXT CONTACT DATE:", nextContactDate )
+  console.log("filter Upcoming Dates " + filter.upcomingContactDates);
 
   if (search) filter.$text = { $search: search };
 
   const cursor = db.collection('contacts').find(filter)
+  // SHH - This hardcoded  mongodb query works?
+  // const cursor = db.collection('contacts').find({ nextContactDate: {$lte: new Date()}})
   .sort({ name: 1})
   .skip(PAGE_SIZE * (page - 1))
   .limit(PAGE_SIZE);
@@ -38,6 +49,34 @@ async function listContact(_, {
   const pages = Math.ceil(totalCount / PAGE_SIZE);
   return { contacts, pages };
 }
+
+// SHH: Upcoming contacts - Resolver
+// async function listUpcomingContact(_, {
+//   activeStatus, contactFrequency, priority, familiarity, nextContactDate, search, page
+// }) {
+//   // it accepts activeStatus as an optional filter param
+//   const db = getDb();
+//   const filter = {};
+//   // if activeStatus is passed in as query param, add it to the list of filters
+//   // Passed more possible filters
+//   // if (activeStatus!==undefined) filter.activeStatus = activeStatus;
+//   // if (contactFrequency!==undefined) filter.contactFrequency = contactFrequency;
+//   // if (priority!==undefined) filter.priority = priority;
+//   // if (familiarity!==undefined) filter.familiarity = familiarity;
+//   if (nextContactDate!==undefined) filter.nextContactDate.$lte = new Date().toISOString();
+//   //console.log("filter: " + filter);
+
+//   if (search) filter.$text = { $search: search };
+
+//   const cursor = db.collection('contacts').find(filter)
+//   .sort({ name: 1})
+//   .skip(PAGE_SIZE * (page - 1))
+//   .limit(PAGE_SIZE);
+//   const totalCount = await cursor.count(false);
+//   const contacts = cursor.toArray();
+//   const pages = Math.ceil(totalCount / PAGE_SIZE);
+//   return { contacts, pages };
+// }
 
 function validateContact(contact) {
   const errors = [];
@@ -311,6 +350,7 @@ module.exports = {
   // delete: mustBeSignedIn(remove),
   // restore: mustBeSignedIn(restore),
   // counts,
+
 
   listContact,
   addContact,

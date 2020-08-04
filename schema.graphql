@@ -86,6 +86,7 @@ type Query {
     priority: priority
     familiarity: familiarity
     activeStatus: Boolean
+    nextContactDate: GraphQLDate
     search: String
     page: Int = 1
   ): ContactsWithPages

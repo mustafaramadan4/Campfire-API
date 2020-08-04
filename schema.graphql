@@ -87,6 +87,7 @@ type Query {
     familiarity: familiarity
     activeStatus: Boolean
     nextContactDate: GraphQLDate
+    daysAhead: Int
     search: String
     page: Int = 1
   ): ContactsWithPages

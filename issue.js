@@ -12,7 +12,10 @@ async function getContact(_, { id }) {
 const PAGE_SIZE = 10;
 
 async function listContact(_, {
-  ownerEmail, activeStatus, contactFrequency, priority, familiarity, nextContactDate, search, page
+  // TO DO: just trying, can I pass another param in that's not part of schema?
+  // parallel to Dashboard.jsx Line 39, passing on vars.
+  ownerEmail, activeStatus, contactFrequency,
+  priority, familiarity, nextContactDate, daysAhead, search, page
 }) {
   // it accepts activeStatus as an optional filter param
   const db = getDb();
@@ -29,7 +32,7 @@ async function listContact(_, {
   // E.g. dates that are (<=) to today.
   if (nextContactDate!==undefined) {
     //TODO: Change the hardcoded number of days ahead maybe =S
-    const filterDate = new Date(new Date().getTime() + (1000 * 60 * 60 * 24 * 14));
+    const filterDate = new Date(new Date().getTime() + (1000 * 60 * 60 * 24 * daysAhead));
     console.log("nextContactDate passed on: " + nextContactDate);
     console.log("filter the date out to: " + filterDate);
     filter.nextContactDate = { $lte: filterDate };

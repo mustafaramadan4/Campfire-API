@@ -12,15 +12,8 @@ async function getContact(_, { id }) {
 const PAGE_SIZE = 10;
 
 async function listContact(_, {
-  /* TO DO: just trying, can I pass another param in that's not part of schema?
-  * parallel to Dashboard.jsx Line 39, passing on vars.
-  * I added an optional param in Query ContactList called "daysAhead", so that we can specify it when needed.
-  * It's passed on as part of the vars, then contactListQuery has $daysAhead passed on.
-  * We can manipulate this variable instead of hardcoding it here, but since it goes all the way
-  * to the backend to the query string itself, I can't be flexible in creating reconnectTable components
-  * according to different daysAhead filter value. e.g. the query string is defined in the Dashboard,
-  * which is a parent component of reconnectTable so reconnectTable doesn't have freedom at all.
-  */
+  // TO DO: just trying, can I pass another param in that's not part of schema?
+  // parallel to Dashboard.jsx Line 39, passing on vars.
   ownerEmail, activeStatus, contactFrequency,
   priority, familiarity, nextContactDate, daysAhead, search, page
 }) {
@@ -37,14 +30,14 @@ async function listContact(_, {
   if (familiarity!==undefined) filter.familiarity = familiarity;
   // SHH - Filter used in Dashboard.jsx to display nextContactDates that are due/
   // E.g. dates that are (<=) to today.
-  // if (nextContactDate!==undefined) {
-  //   //TODO: Change the hardcoded number of days ahead maybe =S
-  //   const filterDate = new Date(new Date().getTime() + (1000 * 60 * 60 * 24 * daysAhead));
-  //   console.log("nextContactDate passed on: " + nextContactDate);
-  //   console.log("filter the date out to: " + filterDate);
-  //   filter.nextContactDate = { $lte: filterDate };
-  //   console.log("HELLLO PEOPLE")
-  // }
+  if (nextContactDate!==undefined) {
+    //TODO: Change the hardcoded number of days ahead maybe =S
+    const filterDate = new Date(new Date().getTime() + (1000 * 60 * 60 * 24 * daysAhead));
+    console.log("nextContactDate passed on: " + nextContactDate);
+    console.log("filter the date out to: " + filterDate);
+    filter.nextContactDate = { $lte: filterDate };
+    console.log("HELLLO PEOPLE")
+  }
 
   if (search) filter.$text = { $search: search };
 

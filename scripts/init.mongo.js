@@ -41,6 +41,7 @@ const contactsDB = [
     company: "Amazon",
     nextContactDate: new Date('2020-08-15'),
     title: "Technical Program Manager",
+    ownerEmail: "pedrocantu@gmail.com",
   },
   {
     id: 2,
@@ -58,6 +59,7 @@ const contactsDB = [
     company: "Deloitte",
     nextContactDate: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 7),
     title: "Technical Program Manager",
+    ownerEmail: "shristov22@gmail.com"
   },
 ];
 
@@ -73,6 +75,7 @@ db.contacts.createIndex({ activeStatus: 1 });
 db.contacts.createIndex({ name: 1 });
 db.contacts.createIndex({ nextContactDate: 1 });
 db.contacts.createIndex({ contactFrequency: 1 });
+db.contacts.createIndex({ ownerEmail: 1 });
 db.contacts.createIndex({ name: 'text', notes: 'text' });
 
 db.deleted_contacts.createIndex({ id: 1 }, { unique: true });

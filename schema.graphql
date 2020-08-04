@@ -81,6 +81,7 @@ type Query {
 
   contact(id: Int!): Contact!
   contactList(
+    ownerEmail: String
     contactFrequency: frequency
     priority: priority
     familiarity: familiarity
@@ -143,6 +144,7 @@ type Contact {
   lastContactDate: GraphQLDate
   nextContactDate: GraphQLDate
   notes: String
+  ownerEmail: String
 }
 
 type ContactsWithPages {
@@ -168,6 +170,7 @@ input ContactInputs {
   lastContactDate: GraphQLDate
   nextContactDate: GraphQLDate
   notes: String
+  ownerEmail: String
 }
 
 """Inputs for contactUpdate: all are optional. Whichever is specified will
@@ -187,4 +190,5 @@ input ContactUpdateInputs {
   lastContactDate: GraphQLDate
   nextContactDate: GraphQLDate
   notes: String
+  ownerEmail: String
 }

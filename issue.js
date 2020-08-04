@@ -29,9 +29,10 @@ async function listContact(_, {
   // E.g. dates that are (<=) to today.
   if (nextContactDate!==undefined) {
     //TODO: Change the hardcoded number of days ahead maybe =S
-    nextContactDate = new Date(new Date().getTime() + (1000 * 60 * 60 * 24 * 14));
-    console.log(nextContactDate);
-    filter.nextContactDate = { $lte: nextContactDate };
+    const filterDate = new Date(new Date().getTime() + (1000 * 60 * 60 * 24 * 14));
+    console.log("nextContactDate passed on: " + nextContactDate);
+    console.log("filter the date out to: " + filterDate);
+    filter.nextContactDate = { $lte: filterDate };
     console.log("HELLLO PEOPLE")
   }
 

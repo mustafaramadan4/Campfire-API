@@ -159,13 +159,15 @@ input ContactInputs {
   name: String!
   company: String
   title: String
-  "if not supplied, will be set to 'None'"
-  contactFrequency: frequency = None
+  "if not supplied, will be set to 'Custom'"
+  contactFrequency: frequency = Custom
   email: String
   phone: String
   LinkedIn: String
-  priority: priority
-  familiarity: familiarity
+  "if not supplied, will be set to 'low'"
+  priority: priority = low
+  "if not supplied, will be set to 'unfamiliar'"
+  familiarity: familiarity = unfamiliar
   contextSpace: String
   "if not supplied, will be set to 'true'"
   activeStatus: Boolean = true

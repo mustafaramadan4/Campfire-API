@@ -21,7 +21,9 @@ async function listContact(_, {
   const db = getDb();
   const filter = {};
   // filter by Owner Email
-  if(ownerEmail!==undefined) filter.ownerEmail = ownerEmail;
+  if(ownerEmail!==null && ownerEmail!==undefined) { 
+    filter.ownerEmail = ownerEmail;
+  }
   // if activeStatus is passed in as query param, add it to the list of filters
   // Passed more possible filters
   if (activeStatus!==undefined) filter.activeStatus = activeStatus;

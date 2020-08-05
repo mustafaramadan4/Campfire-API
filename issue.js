@@ -357,10 +357,16 @@ module.exports = {
   // counts,
 
 
-  listContact,
-  addContact,
-  getContact,
-  updateContact,
-  removeContact,
-  restoreContact,
+  // listContact,
+  // addContact,
+  // getContact,
+  // updateContact,
+  // removeContact,
+  // restoreContact,
+  listContact: mustBeSignedIn(listContact),
+  addContact: mustBeSignedIn(addContact),
+  getContact: mustBeSignedIn(getContact),
+  updateContact: mustBeSignedIn(updateContact),
+  removeContact: mustBeSignedIn(removeContact),
+  restoreContact: mustBeSignedIn(restoreContact),
 };

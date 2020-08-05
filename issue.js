@@ -23,7 +23,7 @@ async function listContact(_, {
   // filter by Owner Email
   if(ownerEmail!==null && ownerEmail!==undefined) { 
     filter.ownerEmail = ownerEmail;
-  }
+  } else {filter.ownerEmail = "*"}
   // if activeStatus is passed in as query param, add it to the list of filters
   // Passed more possible filters
   if (activeStatus!==undefined) filter.activeStatus = activeStatus;

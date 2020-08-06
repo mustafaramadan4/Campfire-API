@@ -38,12 +38,19 @@ Repository Links:
  #### Upcoming things to work on:
 
  For iteration 3, we're considering to extend the functionality of the app such that:
+ 1. Has a user friendly, polished CSS styling.
  1. A call to the `updateContact` API resolver also captures the user info to enhance security to the API post request.  
  Currently, a user's info is used for READ operations only to display user specific contacts. Since the user can only perform an UPDATE operation to the contacts shown on the UI, the UPDATE operation behaves without errors. However, it is possible to update any contacts in the database if the request is made directly to the backend.
  1. The Back button on the Edit page redirects the user either to the Dashboard or the Contacts page depending on their history.  
  Currently, it always takes the user back to the Contacts page.
  1. The dashboard also renders ContactDetail on select.
- 1. Has a user friendly, polished CSS styling.
+ 1. Have a glyphicon associated with the LinkedIn profile upon rendering `ContactDetail`, instead of displaying the whole link.
+ 1. Deactivating the contact clears out the nextContactDate field even if the contact's contactFrequency is set as Custom.  
+ Currently, the nextContactDate clears out on deactivation with all other options for contactFrequency, but not with Custom.
+ 1. The Welcome page lets the user know that he needs to be signed in to use any functionalities or be redirected to other pages. e.g. Toast message.
+ 1. Clean up the code to remove any comments made for development purposes, and template components/components.
+ 1. Add phone number validation, either by a third party library or a regex check.
+ 1. Toast message for deletion shows a name of a contact instead of the id of a contact.
  
  #### Contributions:
  Please note that contributions were a team effort, and we've had numerous multiple hour long team coding/meeting sessions to troubleshoot and/or implement functionalities of our application. As such, commit history may not be the best representation of contributions. Below is listing of contributions broken down by individual in which they were the predominant contributor.
@@ -60,7 +67,7 @@ Repository Links:
  - **HeeJun You**:
     - Implementation of a `DateFilter.jsx` component in the UI for the Dashboard view, to allow the user to filter upcoming dates `nextContactDate` of contacts the user should be following up with.
     - Add Contact behavior modified such that signed in user email information is logged and used to create a databas record of an added contact using the user email so it may be properly indexed.
-    - Changed default values of  `ContactInput` schema.
+    - Changed default values of `ContactInput` schema.
     - Refactoring the existing code in which dates are generated for the `nextContactDate` so that it can properly propagate the filtering of the dates that comes from `DateFilter.jsx`'s dropdown menu, to `Dashboard.jsx`'s vars, ultimately to a call to the `listContact` API resolver.
  - **Mustafa Ramadan**:
     - Responsible for configuration settings/ Google developer console modifications and appropriate deployment to Heroku.

@@ -41,7 +41,7 @@ Dashboard view query for all contacts with specified days ahead of `nextContactD
 }
 ```
 Sample Dashboard Filter Query:
-![Dashboard Filter Query]](https://github.ccs.neu.edu/NEU-CS5610-SU20/GroupProject_jsonStatham_API/blob/master/ReadmeImages/DashboardFilterQuery.png)
+![Dashboard Filter Query](https://github.ccs.neu.edu/NEU-CS5610-SU20/GroupProject_jsonStatham_API/blob/master/ReadmeImages/DashboardFilterQuery.png)
 
 
 #### Contact Add (Create)
@@ -87,7 +87,7 @@ query contact($id: Int!) {
 }
 ```
 Sample  Contact Edit Query:
-![Edit Contact Query]](https://github.ccs.neu.edu/NEU-CS5610-SU20/GroupProject_jsonStatham_API/blob/master/ReadmeImages/EditContactQuery.png)
+![Edit Contact Query](https://github.ccs.neu.edu/NEU-CS5610-SU20/GroupProject_jsonStatham_API/blob/master/ReadmeImages/EditContactQuery.png)
 
 
 Contact Edit Mutation on Submit:

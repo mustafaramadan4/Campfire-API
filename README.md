@@ -35,6 +35,15 @@ Repository Links:
  
  Please note that a listing of the GraphQL queries and mutations can be found in the [graphQL.md](https://github.ccs.neu.edu/NEU-CS5610-SU20/GroupProject_jsonStatham_API/blob/master/graphQL.md) file.
  
+ #### Upcoming things to work on:
+
+ For iteration 3, we're considering to extend the functionality of the app such that:
+ 1. A call to the `updateContact` API resolver also captures the user info to enhance security to the API post request.  
+ Currently, a user's info is used for READ operations only to display user specific contacts. Since the user can only perform an UPDATE operation to the contacts shown on the UI, the UPDATE operation behaves without errors. However, it is possible to update any contacts in the database if the request is made directly to the backend.
+ 1. The Back button on the Edit page redirects the user either to the Dashboard or the Contacts page depending on their history.  
+ Currently, it always takes the user back to the Contacts page.
+ 1. The dashboard also renders ContactDetail on select.
+ 1. Has a user friendly, polished CSS styling.
  
  #### Contributions:
  Please note that contributions were a team effort, and we've had numerous multiple hour long team coding/meeting sessions to troubleshoot and/or implement functionalities of our application. As such, commit history may not be the best representation of contributions. Below is listing of contributions broken down by individual in which they were the predominant contributor.
@@ -44,23 +53,25 @@ Repository Links:
         - Changing the mock data supplied to the database;
         - Modification of the existing  *Contact List API* to use signed-in user email information to query only the contacts belonging to said user.
         - Determination of appropriate propogation of UserContext through the React Component hierachy.
-        - Implemented persistent user session behavior in the Conacts view.
+        - Implemented persistent user session behavior in the Contacts view.
     - Implemented redirection behavior to Dashboard view upon sign-in, and Welcome view upon sign-out.
     - Assisted in modifying Contact List view to allow for warning-free unmounting component behavior upon redirection.
+    - Assisted in troubleshooting the searchbar behavior to properly reflect the change in incorporating user sessions.
  - **HeeJun You**:
     - Implementation of a `DateFilter.jsx` component in the UI for the Dashboard view, to allow the user to filter upcoming dates `nextContactDate` of contacts the user should be following up with.
     - Add Contact behavior modified such that signed in user email information is logged and used to create a databas record of an added contact using the user email so it may be properly indexed.
     - Changed default values of  `ContactInput` schema.
-    - Refactoring the existing code in which dates are generated for the `nextContactDate`.
+    - Refactoring the existing code in which dates are generated for the `nextContactDate` so that it can properly propagate the filtering of the dates that comes from `DateFilter.jsx`'s dropdown menu, to `Dashboard.jsx`'s vars, ultimately to a call to the `listContact` API resolver.
  - **Mustafa Ramadan**:
     - Responsible for configuration settings/ Google developer console modifications and appropriate deployment to Heroku.
     - Modified Dashboard view to utilize signed-in user information and show data owned by the user.
     - Modified Dashboard view to render no contacts when the user is signed-out
  - **Stefan Hristov**:
-    - Created new Welcome component and  landing page and route, along with appropriate CSS styling.
+    - Created new Welcome component and landing page and route, along with appropriate CSS styling.
     - Modification of available website routing and redirection behavior  when the user is signed-in vs. signed-out.
+    - Ensured a responsive in-time rerendering of a `ContactDetail` on toggling behavior.
     - Assisted in modifying Contact List view to allow for warning-free unmounting component behavior upon redirection.
-
+    - Assisted in troubleshooting the searchbar behavior to properly reflect the change in incorporating user sessions.
 ---
 
 <h2> Iteration 1.0: </h2>

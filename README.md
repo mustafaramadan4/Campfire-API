@@ -53,8 +53,9 @@ Repository Links:
     - Changed default values of  `ContactInput` schema.
     - Refactoring the existing code in which dates are generated for the `nextContactDate`.
  - **Mustafa Ramadan**:
-    - Responsible for configuration settings and appropriate deployment to Heroku.
-    - Modified Dashboard view modified to utilize signed-in user information and show data owned by the user.
+    - Responsible for configuration settings/ Google developer console modifications and appropriate deployment to Heroku.
+    - Modified Dashboard view to utilize signed-in user information and show data owned by the user.
+    - Modified Dashboard view to render no contacts when the user is signed-out
  - **Stefan Hristov**:
     - Created new Welcome component and  landing page and route, along with appropriate CSS styling.
     - Modification of available website routing and redirection behavior  when the user is signed-in vs. signed-out.

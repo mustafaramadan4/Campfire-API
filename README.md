@@ -14,7 +14,8 @@ Our group project is called <b>Campfire</b>. The purpose of this web application
 
 ## Iteration 2.0:
 
-Deployment Link: https://campfire-ui-mustafaramadan.herokuapp.com/
+Deployment Link: https://campfire-ui-mustafaramadan.herokuapp.com/  
+**As per any authenticated user web application, a user must sign-in to create their own contacts to see all necessary functionality.**
 
 Repository Links:
  - [API](https://github.ccs.neu.edu/NEU-CS5610-SU20/GroupProject_jsonStatham_API)
@@ -82,7 +83,6 @@ Repository Links:
 ---
 
 <h2> Iteration 1.0: </h2>
-
 
 #### Build and Run Instructions:
 To run and test our Iteration 1.0 application, please perform the following:

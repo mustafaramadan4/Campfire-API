@@ -12,6 +12,56 @@ Our group project is called <b>Campfire</b>. The purpose of this web application
 
 ---
 
+## Iteration 2.0:
+
+Deployment Link: TBD
+
+Repository Links:
+ - [API](https://github.ccs.neu.edu/NEU-CS5610-SU20/GroupProject_jsonStatham_API)
+ - [UI](https://github.ccs.neu.edu/NEU-CS5610-SU20/GroupProject_jsonStatham_UI)
+ 
+ 
+ ![Iteration2 - Welcome Page](/ReadmeImages/WelcomePage.png)
+ 
+ ---
+ 
+ ### Progress:
+ 
+ The significant modifications/improvements as part of iteration 2.0 are as follows:
+ 1. Persistent user sessions, and corrected CRUD APIs to utilize logged in user information to correctly only access data belonging to said user.
+ 2. The Dashboard now has date filter that allows the user to filter contacts by upcoming `nextContactDates` ranging from contacts that they should contact today, to those they should contact up to 30 days from today.
+ 3. The web application now has Welcome landing page.
+ 4. Route redirection is now implemented upon sign-in and sign-out. Additionally, available routes are restricted based on the user's signed-in status.
+ 
+ Please note that a listing of the GraphQL queries and mutations can be found in the [graphQL.md](https://github.ccs.neu.edu/NEU-CS5610-SU20/GroupProject_jsonStatham_API/graphQL.md) file.
+ 
+ 
+ #### Contributions:
+ Please note that contributions were a team effort, and we've had numerous multiple hour long team coding/meeting sessions to troubleshoot and/or implement functionalities of our application. As such, commit history may not be the best representation of contributions. Below is listing of contributions broken down by individual in which they were the predominant contributor.
+ 
+- **Pedro Cantu de la Garza**:
+     - Implementation of "User Sessions", including, but not limited to:
+        - Changing the mock data supplied to the database;
+        - Modification of the existing  *Contact List API* to use signed-in user email information to query only the contacts belonging to said user.
+        - Determination of appropriate propogation of UserContext through the React Component hierachy.
+        - Implemented persistent user session behavior in the Conacts view.
+    - Implemented redirection behavior to Dashboard view upon sign-in, and Welcome view upon sign-out.
+    - Assisted in modifying Contact List view to allow for warning-free unmounting component behavior upon redirection.
+ - **HeeJun You**:
+    - Implementation of a `DateFilter.jsx` component in the UI for the Dashboard view, to allow the user to filter upcoming dates `nextContactDate` of contacts the user should be following up with.
+    - Add Contact behavior modified such that signed in user email information is logged and used to create a databas record of an added contact using the user email so it may be properly indexed.
+    - Changed default values of  `ContactInput` schema.
+    - Refactoring the existing code in which dates are generated for the `nextContactDate`.
+ - **Mustafa Ramadan**:
+    - Responsible for configuration settings and appropriate deployment to Heroku.
+    - Modified Dashboard view modified to utilize signed-in user information and show data owned by the user.
+ - **Stefan Hristov**:
+    - Created new Welcome component and  landing page and route, along with appropriate CSS styling.
+    - Modification of available website routing and redirection behavior  when the user is signed-in vs. signed-out.
+    - Assisted in modifying Contact List view to allow for warning-free unmounting component behavior upon redirection.
+
+---
+
 <h2> Iteration 1.0: </h2>
 
 

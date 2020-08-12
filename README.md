@@ -2,7 +2,10 @@
 
 <h2>Campfire:</h2>
 <h3> Group Members: Pedro Cantu, Stefan Hristov, Mustafa Ramadan, Heejun You </h3>
-You are currenly on the API repository for project Campfire. 
+You are currenly on the API repository for project Campfire.
+
+Deployment Link: https://campfire-ui.herokuapp.com/
+**As per any authenticated user web application, a user must sign-in to create their own contacts to see all necessary functionality.**
 
 <b>API Repository:</b> https://github.ccs.neu.edu/NEU-CS5610-SU20/GroupProject_jsonStatham_API
 

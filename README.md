@@ -46,8 +46,8 @@ Repository Links:
  Currently, it always takes the user back to the Contacts page.
  1. ~~The dashboard also renders ContactDetail on select.~~
  1. ~~Have a glyphicon associated with the LinkedIn profile upon rendering `ContactDetail`, instead of displaying the whole link.~~
- 1. Deactivating the contact clears out the nextContactDate field even if the contact's contactFrequency is set as Custom.  
- Currently, the nextContactDate clears out on deactivation with all other options for contactFrequency, but not with Custom.
+ 1. ~~Deactivating the contact clears out the nextContactDate field even if the contact's contactFrequency is set as Custom.~~ 
+ ~~Currently, the nextContactDate clears out on deactivation with all other options for contactFrequency, but not with Custom.~~
  1. ~~The Welcome page lets the user know that he needs to be signed in to use any functionalities or be redirected to other pages. e.g. Toast message.~~
  1. Clean up the code to remove any comments made for development purposes, and template components/components.
  1. ~~Add phone number validation, either by a third party library or a regex check.~~

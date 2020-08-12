@@ -10,6 +10,47 @@ You are currenly on the API repository for project Campfire.
 
 Our group project is called <b>Campfire</b>. The purpose of this web application is for a user to log into the webapp, and be able to add "contacts" into their personalized address book, and be able to set frequencies for how often they would like to reconnect with their contacts. Thus by using this webapp, the user will always be reconnecting with contacts in accordance to how often they want to reconnect with them. Forgetfulness is no longer a factor when using Campfire. The basis of this project has been created using the boilerplate code used from the MERN Stack Issue Tracker Book Project by Vasan Subramanian.
 
+
+## Iteration 3.0:
+
+Deployment Link: 
+**As per any authenticated user web application, a user must sign-in to create their own contacts to see all necessary functionality.**
+
+Repository Links:
+ - [API](https://github.ccs.neu.edu/NEU-CS5610-SU20/GroupProject_jsonStatham_API)
+ - [UI](https://github.ccs.neu.edu/NEU-CS5610-SU20/GroupProject_jsonStatham_UI)
+ 
+  #### Work completed for Iteration 3:
+
+ 1. Has a user friendly, polished CSS styling.
+ 1. The dashboard also renders ContactDetail on select.
+ 1. Have a glyphicon associated with the LinkedIn profile upon rendering `ContactDetail`, instead of displaying the whole link.
+ 1. Deactivating the contact clears out the nextContactDate field even if the contact's contactFrequency is set as Custom. Currently, the nextContactDate clears out on deactivation with all other options for contactFrequency, but not with Custom.
+ 1. The Welcome page lets the user know that he needs to be signed in to use any functionalities or be redirected to other pages. e.g. Toast message.
+ 1. Clean up the code to remove any comments made for development purposes, and template components/components.
+ 1. Add phone number validation, either by a third party library or a regex check.
+ 1. Toast message for deletion shows a name of a contact instead of the id of a contact.
+
+  #### Contributions:
+ Please note that contributions were a team effort, and we've had numerous multiple hour long team coding/meeting sessions to troubleshoot and/or implement functionalities of our application. As such, commit history may not be the best representation of contributions. Below is listing of contributions broken down by individual in which they were the predominant contributor.
+ 
+- **Pedro Cantu de la Garza**:
+    - Implemented a user friendly, polished CSS styling.
+    - Deactivating the contact clears out the nextContactDate field even if the contact's contactFrequency is set as Custom. Currently, the nextContactDate clears out on deactivation with all other options for contactFrequency, but not with Custom.
+    - Add phone number validation, either by a third party library or a regex check.
+ - **HeeJun You**:
+    - Clean up the code to remove any comments made for development purposes, and template components/components.
+ - **Mustafa Ramadan**:
+    - The Welcome page lets the user know that he needs to be signed in to use any functionalities or be redirected to other pages. e.g. Toast message.
+    - Updated the Heroku application domain name
+ - **Stefan Hristov**:
+    -  Implemented a user friendly, polished CSS styling.
+    -  Toast message for deletion and restore shows a name of a contact instead of the id of a contact.
+    -  Clean up the code to remove any comments made for development purposes, and template components/components.
+    -  Have a glyphicon associated with the LinkedIn profile upon rendering `ContactDetail`, instead of displaying the whole link.
+    -  The dashboard also renders ContactDetail on select.
+    -  Implemented NavBar to be mobile responsive
+
 ---
 
 ## Iteration 2.0:

@@ -224,9 +224,15 @@ function setNextContactDate(contact, turnedActive, manualDateChange, newActiveSt
       nextDate = generateDates(contact.contactFrequency, new Date());
     }
   } else {  // if manualDateChange is true, don't modify the contactNextDate
+    console.log("MANUAL DATE CHANGE IS TRUE:", contact.nextContactDate);
     nextDate = contact.nextContactDate;
+    console.log("CONTACT ACTIVE STATUS:", contact.activeStatus);
+    // Custom Frequency and activeStatus is False, set date to null
+    if(contact.activeStatus === false) {
+      nextDate = null;
+    }
   }
-  console.log(nextDate);
+  console.log("NEXT DATE LINE 229:", nextDate);
   return {nextDate, newActiveStatus};
 }
 

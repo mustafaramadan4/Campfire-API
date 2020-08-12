@@ -220,11 +220,11 @@ async function updateContact(_, { id, changes }) {
 
 async function removeContact(_, { id }) {
   const db = getDb();
-  const issue = await db.collection('contacts').findOne({ id });
-  if (!issue) return false;
-  issue.deleted = new Date();
+  const contact = await db.collection('contacts').findOne({ id });
+  if (!contact) return false;
+  contact.deleted = new Date();
 
-  let result = await db.collection('deleted_contacts').insertOne(issue);
+  let result = await db.collection('deleted_contacts').insertOne(contact);
   if (result.insertedId) {
     result = await db.collection('contacts').removeOne({ id });
     return result.deletedCount === 1;
@@ -234,11 +234,11 @@ async function removeContact(_, { id }) {
 
 async function restoreContact(_, { id }) {
   const db = getDb();
-  const issue = await db.collection('deleted_contacts').findOne({ id });
-  if (!issue) return false;
-  issue.deleted = new Date();
+  const contact = await db.collection('deleted_contacts').findOne({ id });
+  if (!contact) return false;
+  contact.deleted = new Date();
 
-  let result = await db.collection('contacts').insertOne(issue);
+  let result = await db.collection('contacts').insertOne(contact);
   if (result.insertedId) {
     result = await db.collection('deleted_contacts').removeOne({ id });
     return result.deletedCount === 1;

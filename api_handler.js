@@ -3,22 +3,22 @@ require('dotenv').config();
 const { ApolloServer } = require('apollo-server-express');
 const GraphQLDate = require('./graphql_date.js');
 const about = require('./about.js');
-const issue = require('./issue.js');
+const contact = require('./contact.js');
 const auth = require('./auth.js');
 
 const resolvers = {
   Query: {
     about: about.getMessage,
     user: auth.resolveUser,
-    contact: issue.getContact,
-    contactList: issue.listContact,
+    contact: contact.getContact,
+    contactList: contact.listContact,
   },
   Mutation: {
     setAboutMessage: about.setMessage,
-    contactAdd: issue.addContact,
-    contactUpdate: issue.updateContact,
-    contactDelete: issue.removeContact,
-    contactRestore: issue.restoreContact,
+    contactAdd: contact.addContact,
+    contactUpdate: contact.updateContact,
+    contactDelete: contact.removeContact,
+    contactRestore: contact.restoreContact,
   },
   GraphQLDate,
 };

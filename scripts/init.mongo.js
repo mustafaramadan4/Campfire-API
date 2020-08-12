@@ -2,9 +2,9 @@
 Run using the mongo shell. For remote databases, ensure that the connection string
 is supplied in the command line. For example:
 localhost:
-    mongo issuetracker scripts/init.mongo.js
+    mongo campfire scripts/init.mongo.js
 Atlas:
-    mongo mongodb+srv://user:pwd@xxx.mongodb.net/issuetracker scripts/init.mongo.js
+    mongo mongodb+srv://user:pwd@xxx.mongodb.net/campfire scripts/init.mongo.js
 */
 
 
@@ -65,7 +65,7 @@ const contactsDB = [
 
 db.contacts.insertMany(contactsDB);
 const count = db.contacts.count();
-print('Inserted', count, 'issues');
+print('Inserted', count, 'contacts');
 
 db.counters.remove({ _id: 'contacts' });
 db.counters.insert({ _id: 'contacts', current: count });

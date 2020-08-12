@@ -10,14 +10,11 @@ const resolvers = {
   Query: {
     about: about.getMessage,
     user: auth.resolveUser,
-    //issueCounts: issue.counts,
-
     contact: issue.getContact,
     contactList: issue.listContact,
   },
   Mutation: {
     setAboutMessage: about.setMessage,
-
     contactAdd: issue.addContact,
     contactUpdate: issue.updateContact,
     contactDelete: issue.removeContact,

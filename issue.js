@@ -12,20 +12,17 @@ async function getContact(_, { id }) {
 const PAGE_SIZE = 10;
 
 async function listContact(_, {
-  // TO DO: just trying, can I pass another param in that's not part of schema?
   // parallel to Dashboard.jsx Line 39, passing on vars.
   ownerEmail, activeStatus, contactFrequency,
   priority, familiarity, nextContactDate, daysAhead, search, page
 }) {
-  // it accepts activeStatus as an optional filter param
   const db = getDb();
   const filter = {};
-  // filter by Owner Email
+  // if a field is passed in as query param, add it to the list of filters
+  // for ownerEmail, setit to some string * so that it doesn't match anything
   if(ownerEmail!==null && ownerEmail!==undefined) { 
     filter.ownerEmail = ownerEmail;
   } else {filter.ownerEmail = "*"}
-  // if activeStatus is passed in as query param, add it to the list of filters
-  // Passed more possible filters
   if (activeStatus!==undefined) filter.activeStatus = activeStatus;
   if (contactFrequency!==undefined) filter.contactFrequency = contactFrequency;
   if (priority!==undefined) filter.priority = priority;
@@ -33,18 +30,12 @@ async function listContact(_, {
   // SHH - Filter used in Dashboard.jsx to display nextContactDates that are due/
   // E.g. dates that are (<=) to today.
   if (nextContactDate!==undefined) {
-    //TODO: Change the hardcoded number of days ahead maybe =S
     const filterDate = new Date(new Date().getTime() + (1000 * 60 * 60 * 24 * daysAhead));
-    console.log("nextContactDate passed on: " + nextContactDate);
-    console.log("filter the date out to: " + filterDate);
     filter.nextContactDate = { $lte: filterDate };
-    console.log("HELLLO PEOPLE")
   }
 
   if (search) filter.$text = { $search: search };
 
-  // SHH - This hardcoded  mongodb query works?
-  // const cursor = db.collection('contacts').find({ nextContactDate: {$lte: new Date()}})
   const cursor = db.collection('contacts').find(filter)
   .sort({ name: 1})
   .skip(PAGE_SIZE * (page - 1))
@@ -54,34 +45,6 @@ async function listContact(_, {
   const pages = Math.ceil(totalCount / PAGE_SIZE);
   return { contacts, pages };
 }
-
-// SHH: Upcoming contacts - Resolver
-// async function listUpcomingContact(_, {
-//   activeStatus, contactFrequency, priority, familiarity, nextContactDate, search, page
-// }) {
-//   // it accepts activeStatus as an optional filter param
-//   const db = getDb();
-//   const filter = {};
-//   // if activeStatus is passed in as query param, add it to the list of filters
-//   // Passed more possible filters
-//   // if (activeStatus!==undefined) filter.activeStatus = activeStatus;
-//   // if (contactFrequency!==undefined) filter.contactFrequency = contactFrequency;
-//   // if (priority!==undefined) filter.priority = priority;
-//   // if (familiarity!==undefined) filter.familiarity = familiarity;
-//   if (nextContactDate!==undefined) filter.nextContactDate.$lte = new Date().toISOString();
-//   //console.log("filter: " + filter);
-
-//   if (search) filter.$text = { $search: search };
-
-//   const cursor = db.collection('contacts').find(filter)
-//   .sort({ name: 1})
-//   .skip(PAGE_SIZE * (page - 1))
-//   .limit(PAGE_SIZE);
-//   const totalCount = await cursor.count(false);
-//   const contacts = cursor.toArray();
-//   const pages = Math.ceil(totalCount / PAGE_SIZE);
-//   return { contacts, pages };
-// }
 
 function validateContact(contact) {
   const errors = [];
@@ -97,26 +60,13 @@ function validateContact(contact) {
     errors.push('At least one contact mean should be provided.');
   }
   if(contact.email !== null && contact.email.length > 0) {
-    console.log("IM EMAIL");
     let mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
     if(!contact.email.match(mailformat)) {
       errors.push('You have entered an invalid email address!');
     }
   }
-  /*
-  * TODO: I temporarily commented the phone number validation out as it introduced some error,
-  * 1. Variable "$changes" got invalid value 1212341234 at "changes.phone"; Expected type String. String cannot represent a non string value: 1212341234
-  * 2. Wouldn't let us edit the phone number in the database that's already in the format of 000-000-0000
-  */
-  // if(contact.phone.length > 0) {
-  //   let phoneformat = /^\d{10}$/;
-  //   if(!contact.phone.match(phoneformat)) {
-  //     errors.push('Phone number should be 10 digits!');
-  //   }
-  // }
+
   if(contact.LinkedIn !== null && contact.LinkedIn.length > 0) {
-    console.log("LINK" + contact.LinkedIn);
-    console.log("IM HERERERE");
     if(!contact.LinkedIn.includes("linkedin.com/")) {
       errors.push('You have entered an invalid linkedin address!');
     }
@@ -152,7 +102,6 @@ function generateDates(frequency, baseDate) {
       nextDate = dateTemplate(baseDate, BIWEEKLY);
       break;
     case "Monthly":
-      console.log("baseMonth: " + baseDate.getMonth());
       switch(baseDate.getMonth()) {
         // DONE: implement monthly to 30 or 31 depending on the month.
         // For some reason the getMonth() gives an integer one less than the actual month value,
@@ -189,24 +138,8 @@ function generateDates(frequency, baseDate) {
 * 4. If the active status goes from active to inactive, don't do anything.
 */
 function setNextContactDate(contact, turnedActive, manualDateChange, newActiveStatus) {
-  // if there is no change in active status, set next date based on the last date.
-  // DONE: Initialized lastDate variable as the lastContactDate.
-  
-  /* TODO: weird behaviors found.
-  * ***FIXED: 1. when setting the contact "inactive" on the "edit" page, 
-  * it sets the nextContactDate to null but the active status turns Inactive to Active again
-  * ***FIXED: 2. when manually setting the nextContactDate, it doesn't take it and set it to a date
-  * based on the contactFrequency and the lastContactDate. e.g. Agnesse Caigg, it sets to Fri Dec 20 2019
-  * *** FIXED: 3. if there's a change in the contactFreq already in the active status, since it only sets it based on the last date,
-  * it can set it on the past. e.g. Agnesse Caigg, it sets to Fri Mar 13 2020 if change the contactFreq to Quarterly.
-  * *** FIXED: 4. PEDRO! ugh so I think you fixed the behavior where we had to submit "twice" to fully update a field,
-  * it's happening again in a case where the user sets the date manually with a custom date, and change the contactFrequency
-  * back to one of the weekly/monthly/etc options, it doesn't change the date automatically. dm me if you see this comment.
-  */
-
   let nextDate;
-  if (manualDateChange === false) { // DONE: needs a condition to check if the user's trying to set the nextContactDate manually.
-    console.log("turnedActive: " + turnedActive);
+  if (manualDateChange === false) {
     // already active contact, setting the next date based on the last date.
     if (contact.activeStatus === true && !turnedActive) {
       let lastDate = new Date(contact.lastContactDate);
@@ -219,20 +152,16 @@ function setNextContactDate(contact, turnedActive, manualDateChange, newActiveSt
       }
     } else if (turnedActive === true) {
     // when the user now turns on the active status, set the next date from today's date.
-      console.log("now turned active, setting the next contact date based on today's date");
       // Call generate date using today as the base
       nextDate = generateDates(contact.contactFrequency, new Date());
     }
   } else {  // if manualDateChange is true, don't modify the contactNextDate
-    console.log("MANUAL DATE CHANGE IS TRUE:", contact.nextContactDate);
     nextDate = contact.nextContactDate;
-    console.log("CONTACT ACTIVE STATUS:", contact.activeStatus);
     // Custom Frequency and activeStatus is False, set date to null
     if(contact.activeStatus === false) {
       nextDate = null;
     }
   }
-  console.log("NEXT DATE LINE 229:", nextDate);
   return {nextDate, newActiveStatus};
 }
 
@@ -275,12 +204,8 @@ async function updateContact(_, { id, changes }) {
       }
     }
     if (contact.contactFrequency === "Custom" && changes.contactFrequency === "Custom") {
-      // DONE: I need to make the custom date persist, cos it sets the custom date but goes away on a second submit.
       manualDateChange = true;
     }
-    console.log("contact.nextContactDate: " + contact.nextContactDate);
-    console.log("changes.nextContactDate: " + changes.nextContactDate);
-    console.log("manualDateChange is: " + manualDateChange);
     Object.assign(contact, changes);
 
     const { nextDate, newActiveStatus } = setNextContactDate(contact, activated, manualDateChange, news);
@@ -321,57 +246,10 @@ async function restoreContact(_, { id }) {
   return false;
 }
 
-async function counts(_, { status, effortMin, effortMax }) {
-  const db = getDb();
-  const filter = {};
-
-  if (status) filter.status = status;
-
-  if (effortMin !== undefined || effortMax !== undefined) {
-    filter.effort = {};
-    if (effortMin !== undefined) filter.effort.$gte = effortMin;
-    if (effortMax !== undefined) filter.effort.$lte = effortMax;
-  }
-
-  const results = await db.collection('issues').aggregate([
-    { $match: filter },
-    {
-      $group: {
-        _id: { owner: '$owner', status: '$status' },
-        count: { $sum: 1 },
-      },
-    },
-  ]).toArray();
-
-  const stats = {};
-  results.forEach((result) => {
-    // eslint-disable-next-line no-underscore-dangle
-    const { owner, status: statusKey } = result._id;
-    if (!stats[owner]) stats[owner] = { owner };
-    stats[owner][statusKey] = result.count;
-  });
-  return Object.values(stats);
-}
-
 module.exports = {
-  // list,
-  // add: mustBeSignedIn(add),
-  // get,
-  // update: mustBeSignedIn(update),
-  // delete: mustBeSignedIn(remove),
-  // restore: mustBeSignedIn(restore),
-  // counts,
-
-
   listContact,
-  // addContact,
   getContact,
-  // updateContact,
-  // removeContact,
-  // restoreContact,
-  // listContact: mustBeSignedIn(listContact),
   addContact: mustBeSignedIn(addContact),
-  // getContact: mustBeSignedIn(getContact),
   updateContact: mustBeSignedIn(updateContact),
   removeContact: mustBeSignedIn(removeContact),
   restoreContact: mustBeSignedIn(restoreContact),

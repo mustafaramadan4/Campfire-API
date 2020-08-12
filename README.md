@@ -40,9 +40,11 @@ Repository Links:
     - Add phone number validation, either by a third party library or a regex check.
  - **HeeJun You**:
     - Clean up the code to remove any comments made for development purposes, and template components/components.
+    - Installed an external react fontawesome package and applied the icon image to the linkedin button.
+    - Assisted in reconfiguring the Heroku application to a unique domain name
  - **Mustafa Ramadan**:
     - The Welcome page lets the user know that he needs to be signed in to use any functionalities or be redirected to other pages. e.g. Toast message.
-    - Updated the Heroku application domain name
+    - Reconfigured the Heroku application to a unique domain name
  - **Stefan Hristov**:
     -  Implemented a user friendly, polished CSS styling.
     -  Toast message for deletion and restore shows a name of a contact instead of the id of a contact.
